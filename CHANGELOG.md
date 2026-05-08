@@ -5,6 +5,17 @@ Format: [Anlamsal Sürüm](https://semver.org/lang/tr/) · tarih · kısa özet.
 
 ---
 
+## [1.4.1] — 2026-05-08
+**"Ambient drone"**
+### Değişti
+- `music.js` sadeleştirildi: MIDI parser/synth çıkarıldı.
+- Oyun müziği prosedürel **WebAudio drone**'a dönüştü — dosya gerekmez, fetch gerekmez, server gerekmez. `file://` üzerinden bile çalışır.
+- Menü müziği `space_echo.ogg` aynen `<audio>` ile çalmaya devam eder.
+### Sebep
+- MIDI tarayıcılarda doğal olarak desteklenmiyor; manuel parser + `fetch` `file://` ile bloke oluyordu. "Çalsın bari" deneyimi karmaşıklaşıyordu. Prosedürel drone hep çalar.
+
+---
+
 ## [1.4.0] — 2026-05-08
 **"Derelict signal"**
 ### Eklendi

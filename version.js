@@ -3,12 +3,23 @@
 // CHANGELOG.md ile senkron tut.
 
 const VERSION = {
-  number: "1.4.0",
-  codename: "DERELICT SIGNAL",
+  number: "1.4.1",
+  codename: "AMBIENT DRONE",
   date: "2026-05-08",
   build: "monolith",
 
   history: [
+    {
+      v: "1.4.1",
+      date: "2026-05-08",
+      codename: "AMBIENT DRONE",
+      changes: [
+        "Müzik motoru sadeleştirildi — MIDI parser kaldırıldı",
+        "Oyun müziği prosedürel hale getirildi (WebAudio drone, dosya gerekmez)",
+        "Menü müziği <audio> ile aynı, file:// üzerinden çalışır",
+        "fetch / yerel sunucu gereksinimi yok",
+      ],
+    },
     {
       v: "1.4.0",
       date: "2026-05-08",
