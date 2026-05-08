@@ -5,6 +5,21 @@ Format: [Anlamsal Sürüm](https://semver.org/lang/tr/) · tarih · kısa özet.
 
 ---
 
+## [1.6.1] — 2026-05-08
+**"Deploy kit"**
+### Eklendi
+- `deploy.ps1` — PowerShell paketleyici. Çalıştır → `echo-game-v<sürüm>.zip` aynı dizinde oluşur.
+- Sürüm numarasını `version.js`'den otomatik okur, dosya ismine bastırır.
+- Sadece runtime dosyaları (10 .js + html + css + music/) paketlenir; README / CLAUDE / .git atlanır.
+- `.gitignore` güncellemesi: `echo-game-v*.zip` artık commit'e karışmaz.
+### Kullanım
+```powershell
+.\deploy.ps1
+```
+Çıktı zip ~2 MB (büyük kısmı `space_echo.ogg`). Hosting'in dosya yöneticisinden yükle → Extract → bitti.
+
+---
+
 ## [1.6.0] — 2026-05-08
 **"Touch"**
 ### Eklendi

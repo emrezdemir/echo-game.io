@@ -109,6 +109,19 @@ Editörde: sol-tık yerleştir, sağ-tık sil, sürükle ile boya.
 
 ---
 
+## Hosting'e Dağıtım
+
+```powershell
+.\deploy.ps1
+```
+
+Aynı dizinde `echo-game-v<sürüm>.zip` oluşur. Hosting kontrol panelinden:
+1. `public_html` (veya web kökü) klasörüne zip'i yükle
+2. Dosya yöneticisinden **Extract** et
+3. `index.html` site kökünde olmalı (alt klasör değil)
+
+Zip ~2 MB; sadece runtime dosyaları (10 .js + html + css + music/). Belge dosyaları (README, CLAUDE.md, CHANGELOG) ve `.git/` paketten hariç.
+
 ## Sürüm
 
 Bkz. [CHANGELOG.md](CHANGELOG.md).

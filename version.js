@@ -4,12 +4,31 @@
 // changes alanı iki dilli: { tr: [...], en: [...] }
 
 const VERSION = {
-  number: "1.6.0",
-  codename: "TOUCH",
+  number: "1.6.1",
+  codename: "DEPLOY KIT",
   date: "2026-05-08",
   build: "monolith",
 
   history: [
+    {
+      v: "1.6.1",
+      date: "2026-05-08",
+      codename: "DEPLOY KIT",
+      changes: {
+        tr: [
+          "deploy.ps1 — PowerShell paketleyici scripti",
+          "Sürümü version.js'den okur, echo-game-v<sürüm>.zip oluşturur",
+          "Sadece runtime dosyaları paketlenir (README/CLAUDE/git vb. atlanır)",
+          "Zip'ler .gitignore'a eklendi (commit'e karışmasın)",
+        ],
+        en: [
+          "deploy.ps1 — PowerShell packaging script",
+          "Reads version from version.js, produces echo-game-v<version>.zip",
+          "Only runtime files included (README/CLAUDE/git etc. skipped)",
+          "Zips added to .gitignore (kept out of commits)",
+        ],
+      },
+    },
     {
       v: "1.6.0",
       date: "2026-05-08",
