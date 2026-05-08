@@ -442,3 +442,131 @@ button.back:hover { background: var(--ink-dim); color: var(--bg); }
   padding: 2px 6px;
   border: 1px solid var(--grid);
 }
+
+/* ===== TOUCH CONTROLS (mobil) ===== */
+.touch-controls {
+  display: none;          /* desktop'ta gizli, media query açar */
+  width: min(640px, 100%);
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+.dpad {
+  position: relative;
+  width: 156px;
+  height: 156px;
+}
+.dp {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--accent);
+  background: rgba(138,125,255,0.08);
+  color: var(--ink);
+  font-size: 18px;
+  padding: 0;
+  letter-spacing: 0;
+  border-radius: 8px;
+  touch-action: manipulation;
+}
+.dp:active { background: var(--accent); color: var(--bg); }
+.dp-up    { top: 0;    left: 52px; }
+.dp-down  { bottom: 0; left: 52px; }
+.dp-left  { top: 52px; left: 0; }
+.dp-right { top: 52px; right: 0; }
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  flex: 1;
+  max-width: 240px;
+}
+.act {
+  height: 52px;
+  border: 1px solid var(--accent-2);
+  color: var(--accent-2);
+  background: rgba(90,215,255,0.05);
+  font-size: 16px;
+  letter-spacing: 0.15em;
+  padding: 0;
+  border-radius: 8px;
+  touch-action: manipulation;
+}
+.act:active { background: var(--accent-2); color: var(--bg); }
+.act-z { border-color: var(--ink-dim); color: var(--ink-dim); background: transparent; }
+.act-n { border-color: var(--warn); color: var(--warn); background: transparent; }
+
+/* ===== Responsive (≤900px) ===== */
+@media (max-width: 900px) {
+  .screen { padding: 10px; align-items: flex-start; }
+
+  /* Title */
+  .title-frame { padding-top: 24px; }
+  .big-title { font-size: 36px; letter-spacing: 0.25em; }
+  .tagline { font-size: 11px; padding: 0 8px; }
+  .menu button { width: 100%; max-width: 320px; }
+
+  /* HUD */
+  .hud { width: 100%; flex-wrap: wrap; gap: 6px; font-size: 11px; }
+  .hud .stats { gap: 8px; flex-wrap: wrap; }
+
+  /* Stage */
+  .frame { width: 100%; gap: 8px; }
+  .stage {
+    width: min(100vw - 20px, 100vh - 320px);
+    height: min(100vw - 20px, 100vh - 320px);
+    max-width: 640px;
+    max-height: 640px;
+  }
+
+  /* Touch controls görünür */
+  .touch-controls { display: flex; }
+
+  /* Legend daha kompakt */
+  .legend { width: 100%; font-size: 10px; gap: 6px; }
+  .legend .keys { display: none; }   /* klavye ipucu mobilde gereksiz */
+
+  /* Level select tek sütun */
+  .level-list { grid-template-columns: 1fr; }
+  .select-frame { width: 100%; }
+
+  /* Story */
+  .story-frame { padding: 24px 20px; }
+  .story-body { font-size: 12px; }
+
+  /* Version history */
+  .version-frame { width: 100%; }
+
+  /* Editor — sidebar canvas altına */
+  .editor-frame { max-width: 100%; }
+  .ed-body { grid-template-columns: 1fr; }
+  .ed-canvas-wrap { height: min(80vw, 400px); order: -1; }
+  .ed-side { font-size: 11px; }
+  .ed-toolbar { grid-template-columns: repeat(4, 1fr); }
+  .ed-toolbar .tool { font-size: 8px; padding: 8px 2px; }
+
+  /* Overlay card daha küçük */
+  .overlay-card { min-width: 0; padding: 20px 24px; }
+  .overlay-card h2 { font-size: 16px; letter-spacing: 0.2em; }
+  .overlay-card p { font-size: 11px; }
+  .overlay-btns button { padding: 8px 14px; font-size: 11px; }
+}
+
+/* ≤500px (telefon dikey) */
+@media (max-width: 500px) {
+  .big-title { font-size: 28px; }
+  .stage { width: min(100vw - 16px, 100vh - 360px); height: min(100vw - 16px, 100vh - 360px); }
+  .dpad { width: 132px; height: 132px; }
+  .dp { width: 44px; height: 44px; font-size: 16px; }
+  .dp-up    { left: 44px; }
+  .dp-down  { left: 44px; }
+  .dp-left  { top: 44px; }
+  .dp-right { top: 44px; }
+  .actions { max-width: 180px; }
+  .act { height: 44px; font-size: 14px; }
+}

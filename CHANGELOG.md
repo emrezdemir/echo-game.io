@@ -5,6 +5,23 @@ Format: [Anlamsal Sürüm](https://semver.org/lang/tr/) · tarih · kısa özet.
 
 ---
 
+## [1.6.0] — 2026-05-08
+**"Touch"**
+### Eklendi
+- Mobil/tablet desteği — tüm ekranlar viewport'a göre responsive.
+- Oyun ekranında **dokunmatik D-pad** (4 yön butonu) + **R / Z / N aksiyon butonları**.
+- Canvas üzerinde **swipe** desteği (D-pad'e alternatif): parmağı sürükleyip bırak.
+- Editör mobilde sidebar canvas altına geçer; eskiden iki sütundu.
+- Üç kırılma noktası: 900px (tablet altı), 500px (telefon dikey).
+### Değişti
+- Title ekranı menü butonları mobilde tam genişlik.
+- HUD compact mod, klavye ipucu mobilde gizli.
+- `touch-action: manipulation` ile çift-tıklamada zoom engellendi.
+### Notlar
+- Canvas iç çözünürlüğü hâlâ 640x640; mobilde sadece görsel olarak ölçeklenir, render kalitesi korunur.
+
+---
+
 ## [1.5.0] — 2026-05-08
 **"Babel"**
 ### Eklendi

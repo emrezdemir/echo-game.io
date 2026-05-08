@@ -4,12 +4,37 @@
 // changes alanı iki dilli: { tr: [...], en: [...] }
 
 const VERSION = {
-  number: "1.5.0",
-  codename: "BABEL",
+  number: "1.6.0",
+  codename: "TOUCH",
   date: "2026-05-08",
   build: "monolith",
 
   history: [
+    {
+      v: "1.6.0",
+      date: "2026-05-08",
+      codename: "TOUCH",
+      changes: {
+        tr: [
+          "Mobil/tablet desteği — tüm ekranlar responsive",
+          "Oyunda dokunmatik D-pad + R/Z/N aksiyon butonları",
+          "Canvas üzerinde swipe ile hareket (yön çubuğa alternatif)",
+          "Telefon dikey, telefon yatay ve tablet için farklı kırılma noktaları",
+          "Editör mobilde canvas üstte, yan panel altta sıralanır",
+          "Klavye ipucu mobilde gizleniyor (yer kazanımı)",
+          "touch-action: manipulation ile çift-tık zoom engellendi",
+        ],
+        en: [
+          "Mobile/tablet support — all screens responsive",
+          "In-game touch D-pad + R/Z/N action buttons",
+          "Swipe-to-move on canvas (alternative to D-pad)",
+          "Distinct breakpoints for phone-portrait, phone-landscape, tablet",
+          "Editor on mobile: canvas on top, side panel below",
+          "Keyboard hint hidden on mobile (saves space)",
+          "Double-tap zoom prevented via touch-action: manipulation",
+        ],
+      },
+    },
     {
       v: "1.5.0",
       date: "2026-05-08",

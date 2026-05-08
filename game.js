@@ -734,6 +734,51 @@ const Game = (() => {
     if (dir) { e.preventDefault(); tick(dir[0], dir[1]); }
   });
 
+  // ---------- Touch input (mobil) ----------
+  const TOUCH_DIRS = {
+    up:    [0, -1],
+    down:  [0, 1],
+    left:  [-1, 0],
+    right: [1, 0],
+  };
+  function bindTouchControls() {
+    document.querySelectorAll("[data-touch]").forEach(btn => {
+      const act = btn.dataset.touch;
+      const fire = (e) => {
+        e.preventDefault();
+        if (TOUCH_DIRS[act]) tick(TOUCH_DIRS[act][0], TOUCH_DIRS[act][1]);
+        else if (act === "r") recordEcho();
+        else if (act === "z") undoEcho();
+        else if (act === "n") fullReset();
+      };
+      // pointerdown her iki platform için yeterli
+      btn.addEventListener("pointerdown", fire);
+    });
+
+    // Canvas üzerinde swipe ile hareket
+    let sx = 0, sy = 0, swiping = false;
+    const SWIPE = 24;
+    canvas.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1) return;
+      const t = e.touches[0];
+      sx = t.clientX; sy = t.clientY; swiping = true;
+    }, { passive: true });
+    canvas.addEventListener("touchend", (e) => {
+      if (!swiping) return;
+      swiping = false;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - sx;
+      const dy = t.clientY - sy;
+      if (Math.abs(dx) < SWIPE && Math.abs(dy) < SWIPE) return;
+      if (Math.abs(dx) > Math.abs(dy)) tick(dx > 0 ? 1 : -1, 0);
+      else tick(0, dy > 0 ? 1 : -1);
+    });
+    // Fareyle de swipe'a izin ver (tablet/dokunmatik laptop)
+    canvas.addEventListener("touchmove", (e) => {
+      if (swiping) e.preventDefault();
+    }, { passive: false });
+  }
+
   function toggleMute() {
     const m = !Audio.isMuted();
     Audio.setMuted(m);
@@ -899,6 +944,7 @@ const Game = (() => {
     applyVersionLabels();
     updateMuteLabel();
     bindMenu();
+    bindTouchControls();
     loop();
     if (!tryHashImport()) {
       Screens.show("title");
