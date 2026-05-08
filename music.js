@@ -12,12 +12,26 @@ const Music = (() => {
   let drone = null;
 
   // ---------- OGG (menu) ----------
-  function playOgg(src) {
+  // window.Audio kullanıyoruz; bizim global Audio (audio.js) modülü ismi gölgeler.
+  function playOgg(src, onFail) {
     stopOgg();
-    oggEl = new Audio(src);
+    oggEl = new window.Audio(src);
     oggEl.loop = true;
     oggEl.volume = muted ? 0 : volume;
-    oggEl.play().catch(err => console.warn("[music] ogg play failed:", err.message));
+    let triggeredFail = false;
+    const fail = (why) => {
+      if (triggeredFail) return;
+      triggeredFail = true;
+      console.warn("[music] ogg yüklenemedi (" + why + ") — prosedürel müziğe geçiliyor.");
+      stopOgg();
+      onFail && onFail();
+    };
+    oggEl.addEventListener("error", () => fail("error event"));
+    // file:// kısıtlamasında bazen sessiz başarısız olur — kısa bir grace period sonra dene
+    setTimeout(() => {
+      if (oggEl && oggEl.networkState === 3 /* NETWORK_NO_SOURCE */) fail("network no source");
+    }, 800);
+    oggEl.play().catch(err => fail(err.message || "play() rejected"));
   }
   function stopOgg() {
     if (oggEl) {
@@ -26,26 +40,45 @@ const Music = (() => {
     }
   }
 
-  // ---------- Procedural drone (game) ----------
+  // ---------- Procedural drone ----------
   // Yavaş hareket eden 4 sesli pad + ara sıra üst kayıtta çan-bip.
-  // Karanlık uzay istasyonu / reaktör hum dokusu.
-  function playDrone() {
+  // variant: 'game' (karanlık reaktör), 'menu' (daha açık/yıldız ambient).
+  const DRONE_VARIANTS = {
+    game: {
+      pad: [
+        { freq: 55,    type: "sine",     gain: 0.18, filter: 800 },
+        { freq: 82.5,  type: "triangle", gain: 0.13, filter: 1000 },
+        { freq: 130.8, type: "sine",     gain: 0.10, filter: 1200 },
+        { freq: 196,   type: "triangle", gain: 0.07, filter: 1400 },
+      ],
+      pingScale: [330, 392, 440, 523, 587, 659],
+      pingMin: 5500, pingMax: 9000, pingGain: 0.05,
+      masterMul: 0.55,
+    },
+    menu: {
+      pad: [
+        { freq: 110,   type: "sine",     gain: 0.13, filter: 1200 },
+        { freq: 165,   type: "triangle", gain: 0.10, filter: 1500 },
+        { freq: 220,   type: "sine",     gain: 0.08, filter: 1800 },
+        { freq: 330,   type: "triangle", gain: 0.05, filter: 2200 },
+      ],
+      pingScale: [440, 523, 659, 784, 880, 1047],
+      pingMin: 3500, pingMax: 6500, pingGain: 0.04,
+      masterMul: 0.45,
+    },
+  };
+
+  function playDrone(variant = "game") {
     stopDrone();
+    const cfg = DRONE_VARIANTS[variant] || DRONE_VARIANTS.game;
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const out = ctx.createGain();
-    out.gain.value = muted ? 0 : volume * 0.55;
+    out.gain.value = muted ? 0 : volume * cfg.masterMul;
     out.connect(ctx.destination);
 
     const nodes = [];
 
-    // Pad: A minör tabanlı open intervals (A1 / E2 / C3 / G3)
-    const pad = [
-      { freq: 55,    type: "sine",     gain: 0.18 },
-      { freq: 82.5,  type: "triangle", gain: 0.13 },
-      { freq: 130.8, type: "sine",     gain: 0.10 },
-      { freq: 196,   type: "triangle", gain: 0.07 },
-    ];
-    pad.forEach((p, i) => {
+    cfg.pad.forEach((p, i) => {
       const osc = ctx.createOscillator();
       osc.type = p.type;
       osc.frequency.value = p.freq;
@@ -61,7 +94,7 @@ const Music = (() => {
       // Yumuşak filtre
       const filt = ctx.createBiquadFilter();
       filt.type = "lowpass";
-      filt.frequency.value = 800 + i * 200;
+      filt.frequency.value = p.filter;
       filt.Q.value = 0.7;
 
       const g = ctx.createGain();
@@ -75,24 +108,24 @@ const Music = (() => {
     });
 
     // Ara sıra üst register'da çan-pingleri
-    const scale = [330, 392, 440, 523, 587, 659];   // E A pentatoniğe yakın
+    const pingDelay = cfg.pingMin + Math.random() * (cfg.pingMax - cfg.pingMin);
     const pingTimer = setInterval(() => {
       if (muted) return;
-      const f = scale[Math.floor(Math.random() * scale.length)];
+      const f = cfg.pingScale[Math.floor(Math.random() * cfg.pingScale.length)];
       const t = ctx.currentTime;
       const osc = ctx.createOscillator();
       osc.type = "sine";
       osc.frequency.value = f;
       const g = ctx.createGain();
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.05, t + 0.04);
+      g.gain.linearRampToValueAtTime(cfg.pingGain, t + 0.04);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 3.5);
       osc.connect(g).connect(out);
       osc.start(t);
       osc.stop(t + 3.7);
-    }, 5500 + Math.random() * 3500);
+    }, pingDelay);
 
-    drone = { ctx, out, nodes, pingTimer };
+    drone = { ctx, out, nodes, pingTimer, variant, masterMul: cfg.masterMul };
   }
 
   function stopDrone() {
@@ -107,14 +140,18 @@ const Music = (() => {
 
   // ---------- Public ----------
   function play(track) {
-    const playing = (track === "menu" && oggEl && !oggEl.paused)
-                 || (track === "game" && drone);
+    const playing = (track === "menu" && (oggEl && !oggEl.paused || (drone && drone.variant === "menu")))
+                 || (track === "game" && drone && drone.variant === "game");
     if (track === currentTrack && playing) return;
     currentTrack = track;
     stopOgg();
     stopDrone();
-    if (track === "menu") playOgg("music/space_echo.ogg");
-    else if (track === "game") playDrone();
+    if (track === "menu") {
+      // Önce OGG'yi dene; başarısız olursa prosedürel menü drone'una düş.
+      playOgg("music/space_echo.ogg", () => playDrone("menu"));
+    } else if (track === "game") {
+      playDrone("game");
+    }
   }
   function stopAll() {
     currentTrack = null;
@@ -124,12 +161,12 @@ const Music = (() => {
   function setMuted(v) {
     muted = !!v;
     if (oggEl) oggEl.volume = muted ? 0 : volume;
-    if (drone) drone.out.gain.value = muted ? 0 : volume * 0.55;
+    if (drone) drone.out.gain.value = muted ? 0 : volume * drone.masterMul;
   }
   function setVolume(v) {
     volume = Math.max(0, Math.min(1, v));
     if (oggEl) oggEl.volume = muted ? 0 : volume;
-    if (drone) drone.out.gain.value = muted ? 0 : volume * 0.55;
+    if (drone) drone.out.gain.value = muted ? 0 : volume * drone.masterMul;
   }
   function getVolume() { return volume; }
   function isMuted() { return muted; }

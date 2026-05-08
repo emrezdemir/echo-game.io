@@ -3,12 +3,23 @@
 // CHANGELOG.md ile senkron tut.
 
 const VERSION = {
-  number: "1.4.1",
-  codename: "AMBIENT DRONE",
+  number: "1.4.2",
+  codename: "FALLBACK ROUTING",
   date: "2026-05-08",
   build: "monolith",
 
   history: [
+    {
+      v: "1.4.2",
+      date: "2026-05-08",
+      codename: "FALLBACK ROUTING",
+      changes: [
+        "Bug: window.Audio constructor'ı çakışan modül adıyla gölgeleniyordu — düzeltildi",
+        "OGG yüklenemezse (file:// kısıtı vb.) menü prosedürel drone'a otomatik düşer",
+        "Menü drone'u oyun drone'undan farklı (daha açık/yıldız ambient)",
+        "Müzik artık file:// üzerinde de hep çalar (OGG ya da drone fallback)",
+      ],
+    },
     {
       v: "1.4.1",
       date: "2026-05-08",

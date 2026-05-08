@@ -5,6 +5,16 @@ Format: [Anlamsal Sürüm](https://semver.org/lang/tr/) · tarih · kısa özet.
 
 ---
 
+## [1.4.2] — 2026-05-08
+**"Fallback routing"**
+### Düzeltildi
+- **Crash bug:** `audio.js` modülünün `Audio` ismi tarayıcının built-in `Audio` constructor'ını gölgeliyordu. `new Audio(src)` çağrısı `TypeError: Audio is not a constructor` veriyordu. `new window.Audio(src)` ile düzeltildi.
+- **file:// üzerinde menü müziği:** Chrome `file://` URL'lerini ayrı origin kabul edip OGG yüklemesini bloke ediyor. OGG yüklenemediğinde otomatik prosedürel menü drone'una düşülür — müzik her senaryoda çalar.
+### Eklendi
+- İki drone varyantı: `menu` (açık/yıldız ambient, yüksek register) ve `game` (karanlık reaktör, alçak register).
+
+---
+
 ## [1.4.1] — 2026-05-08
 **"Ambient drone"**
 ### Değişti
