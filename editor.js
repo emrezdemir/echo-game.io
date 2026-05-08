@@ -1,0 +1,269 @@
+// Basit grid editörü. URL hash üzerinden paylaşılabilir.
+const Editor = (() => {
+  const canvas = () => document.getElementById("editorCanvas");
+  const widthInput = () => document.getElementById("edWidth");
+  const heightInput = () => document.getElementById("edHeight");
+  const movesInput = () => document.getElementById("edMoves");
+  const nameInput = () => document.getElementById("edName");
+  const introInput = () => document.getElementById("edIntro");
+  const toolbar = () => document.getElementById("edToolbar");
+  const shareBox = () => document.getElementById("edShareBox");
+
+  const TOOLS = [
+    { key: ".", label: "ZEMİN" },
+    { key: "#", label: "DUVAR" },
+    { key: "P", label: "BAŞLANGIÇ" },
+    { key: "G", label: "HEDEF" },
+    { key: "a", label: "PLAKA a" },
+    { key: "A", label: "KAPI A" },
+    { key: "b", label: "PLAKA b" },
+    { key: "B", label: "KAPI B" },
+    { key: "c", label: "PLAKA c" },
+    { key: "C", label: "KAPI C" },
+    { key: "1", label: "PORTAL 1" },
+    { key: "2", label: "PORTAL 2" },
+    { key: ">", label: "LAZER →" },
+    { key: "<", label: "LAZER ←" },
+    { key: "^", label: "LAZER ↑" },
+    { key: "v", label: "LAZER ↓" },
+  ];
+
+  let state = {
+    w: 10,
+    h: 8,
+    moves: 16,
+    name: "ÖZEL SEVİYE",
+    intro: "Kendi yankı düzeneğin.",
+    grid: null,        // h x w array of chars
+    lasers: [],        // [{x,y,plate}]
+    tool: "#",
+    painting: false,
+  };
+
+  function emptyGrid(w, h) {
+    const g = [];
+    for (let y = 0; y < h; y++) {
+      let row = "";
+      for (let x = 0; x < w; x++) {
+        if (y === 0 || y === h - 1 || x === 0 || x === w - 1) row += "#";
+        else row += ".";
+      }
+      g.push(row.split(""));
+    }
+    return g;
+  }
+
+  function ensureGridDims() {
+    if (!state.grid) state.grid = emptyGrid(state.w, state.h);
+    while (state.grid.length < state.h) {
+      const row = new Array(state.w).fill(".");
+      row[0] = "#"; row[state.w - 1] = "#";
+      state.grid.push(row);
+    }
+    while (state.grid.length > state.h) state.grid.pop();
+    state.grid.forEach((row, y) => {
+      while (row.length < state.w) row.push(y === 0 || y === state.h - 1 ? "#" : (row.length === state.w - 1 ? "#" : "."));
+      while (row.length > state.w) row.pop();
+    });
+  }
+
+  function setCell(x, y, v) {
+    if (x < 0 || y < 0 || x >= state.w || y >= state.h) return;
+    // Only one P and one G allowed
+    if (v === "P" || v === "G") {
+      for (let yy = 0; yy < state.h; yy++)
+        for (let xx = 0; xx < state.w; xx++)
+          if (state.grid[yy][xx] === v) state.grid[yy][xx] = ".";
+    }
+    state.grid[y][x] = v;
+  }
+
+  function buildToolbar() {
+    const tb = toolbar();
+    tb.innerHTML = "";
+    TOOLS.forEach(t => {
+      const btn = document.createElement("button");
+      btn.className = "tool" + (state.tool === t.key ? " active" : "");
+      btn.textContent = t.label;
+      btn.dataset.key = t.key;
+      btn.onclick = () => {
+        state.tool = t.key;
+        Audio.click();
+        buildToolbar();
+      };
+      tb.appendChild(btn);
+    });
+  }
+
+  function render() {
+    ensureGridDims();
+    const c = canvas();
+    const ctx = c.getContext("2d");
+    const W = c.width;
+    const H = c.height;
+    const cell = Math.min(W / state.w, H / state.h);
+    const ox = (W - cell * state.w) / 2;
+    const oy = (H - cell * state.h) / 2;
+    ctx.fillStyle = "#07080d";
+    ctx.fillRect(0, 0, W, H);
+    for (let y = 0; y < state.h; y++) {
+      for (let x = 0; x < state.w; x++) {
+        const c0 = state.grid[y][x];
+        const cx = ox + x * cell;
+        const cy = oy + y * cell;
+        ctx.fillStyle = "#0d1020";
+        ctx.fillRect(cx, cy, cell, cell);
+        ctx.strokeStyle = "#1a1f3a";
+        ctx.strokeRect(cx + 0.5, cy + 0.5, cell - 1, cell - 1);
+        if (c0 === "#") {
+          ctx.fillStyle = "#2a2f55";
+          ctx.fillRect(cx, cy, cell, cell);
+        } else if (c0 !== ".") {
+          ctx.fillStyle = "#c9d6ff";
+          ctx.font = `${Math.floor(cell * 0.6)}px monospace`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          let txt = c0;
+          if (c0 === "P") { ctx.fillStyle = "#5ad7ff"; txt = "◆"; }
+          else if (c0 === "G") { ctx.fillStyle = "#ffd97d"; txt = "✦"; }
+          else if (c0 >= "a" && c0 <= "z") { ctx.fillStyle = "#8a7dff"; }
+          else if (c0 >= "A" && c0 <= "Z") { ctx.fillStyle = "#c9b6ff"; }
+          else if (c0 >= "1" && c0 <= "9") { ctx.fillStyle = "#7dffb6"; }
+          else if ("<>^v".includes(c0)) { ctx.fillStyle = "#ff7da8"; }
+          ctx.fillText(txt, cx + cell / 2, cy + cell / 2 + 1);
+        }
+      }
+    }
+  }
+
+  function cellAt(evt) {
+    const c = canvas();
+    const r = c.getBoundingClientRect();
+    const cx = (evt.clientX - r.left) * (c.width / r.width);
+    const cy = (evt.clientY - r.top) * (c.height / r.height);
+    const cell = Math.min(c.width / state.w, c.height / state.h);
+    const ox = (c.width - cell * state.w) / 2;
+    const oy = (c.height - cell * state.h) / 2;
+    const x = Math.floor((cx - ox) / cell);
+    const y = Math.floor((cy - oy) / cell);
+    return { x, y };
+  }
+
+  function bind() {
+    const c = canvas();
+    c.oncontextmenu = e => e.preventDefault();
+    c.onmousedown = (e) => {
+      const { x, y } = cellAt(e);
+      const v = e.button === 2 ? "." : state.tool;
+      setCell(x, y, v);
+      state.painting = true;
+      state._paintVal = v;
+      Audio.click();
+      render();
+    };
+    c.onmousemove = (e) => {
+      if (!state.painting) return;
+      const { x, y } = cellAt(e);
+      setCell(x, y, state._paintVal);
+      render();
+    };
+    window.addEventListener("mouseup", () => state.painting = false);
+
+    widthInput().oninput = (e) => {
+      state.w = clamp(parseInt(e.target.value) || 6, 4, 24);
+      ensureGridDims(); render();
+    };
+    heightInput().oninput = (e) => {
+      state.h = clamp(parseInt(e.target.value) || 6, 4, 18);
+      ensureGridDims(); render();
+    };
+    movesInput().oninput = (e) => {
+      state.moves = clamp(parseInt(e.target.value) || 10, 1, 99);
+    };
+    nameInput().oninput = (e) => state.name = (e.target.value || "ÖZEL").slice(0, 32);
+    introInput().oninput = (e) => state.intro = (e.target.value || "").slice(0, 200);
+
+    document.getElementById("edClear").onclick = () => {
+      state.grid = emptyGrid(state.w, state.h);
+      Audio.click();
+      render();
+    };
+    document.getElementById("edTest").onclick = () => {
+      const lvl = exportLevel();
+      Audio.click();
+      Game.playCustom(lvl);
+    };
+    document.getElementById("edShare").onclick = () => {
+      const code = encodeLevel(exportLevel());
+      const url = location.origin + location.pathname + "#l=" + code;
+      shareBox().value = url;
+      shareBox().select();
+      try { document.execCommand("copy"); } catch (e) {}
+      Audio.record();
+      flashStatus("BAĞLANTI KOPYALANDI");
+    };
+    document.getElementById("edBack").onclick = () => {
+      Audio.click();
+      Screens.show("title");
+    };
+  }
+
+  function flashStatus(t) {
+    const el = document.getElementById("edStatus");
+    el.textContent = t;
+    setTimeout(() => { el.textContent = ""; }, 2000);
+  }
+
+  function exportLevel() {
+    return {
+      name: state.name,
+      intro: state.intro,
+      moves: state.moves,
+      grid: state.grid.map(r => r.join("")),
+      lasers: state.lasers,
+      __custom: true,
+    };
+  }
+
+  function encodeLevel(lvl) {
+    const json = JSON.stringify({
+      n: lvl.name, i: lvl.intro, m: lvl.moves, g: lvl.grid, l: lvl.lasers || [],
+    });
+    return btoa(unescape(encodeURIComponent(json))).replace(/=+$/, "");
+  }
+
+  function decodeLevel(code) {
+    try {
+      const padded = code + "=".repeat((4 - code.length % 4) % 4);
+      const json = decodeURIComponent(escape(atob(padded)));
+      const o = JSON.parse(json);
+      return {
+        name: o.n || "PAYLAŞILAN",
+        intro: o.i || "",
+        moves: o.m || 16,
+        grid: o.g,
+        lasers: o.l || [],
+        __custom: true,
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function open() {
+    state.grid = emptyGrid(state.w, state.h);
+    widthInput().value = state.w;
+    heightInput().value = state.h;
+    movesInput().value = state.moves;
+    nameInput().value = state.name;
+    introInput().value = state.intro;
+    shareBox().value = "";
+    buildToolbar();
+    bind();
+    render();
+  }
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  return { open, render, decodeLevel, encodeLevel };
+})();

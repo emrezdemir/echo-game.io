@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Time Echo</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <!-- ===== TITLE ===== -->
+  <section id="screenTitle" class="screen active">
+    <div class="title-frame">
+      <h1 class="big-title">TIME&nbsp;ECHO</h1>
+      <p class="tagline">terk edilmiş bir uzay istasyonu · zaman yankıları · senin geçmişin sana yardım edecek</p>
+      <div class="menu">
+        <button data-act="start">YENİ DÖNGÜ</button>
+        <button data-act="tutorial">NASIL OYNANIR?</button>
+        <button data-act="select">SEVİYE SEÇ</button>
+        <button data-act="editor">EDİTÖR</button>
+        <button data-act="version">SÜRÜM GEÇMİŞİ</button>
+        <button data-act="mute">SES: AÇIK</button>
+      </div>
+      <div class="version" id="titleVersion">v?.?.? · monolith build</div>
+    </div>
+  </section>
+
+  <!-- ===== VERSION HISTORY ===== -->
+  <section id="screenVersion" class="screen">
+    <div class="version-frame">
+      <header class="ed-header">
+        <h2 class="screen-title">// SÜRÜM GEÇMİŞİ</h2>
+        <button class="back" data-act="title">‹ MENÜ</button>
+      </header>
+      <div id="versionList" class="version-list"></div>
+    </div>
+  </section>
+
+  <!-- ===== LEVEL SELECT ===== -->
+  <section id="screenSelect" class="screen">
+    <div class="select-frame">
+      <h2 class="screen-title">// SEVİYE SEÇ</h2>
+      <div id="levelList" class="level-list"></div>
+      <button class="back" data-act="title">‹ MENÜ</button>
+    </div>
+  </section>
+
+  <!-- ===== STORY ===== -->
+  <section id="screenStory" class="screen">
+    <div class="story-frame">
+      <h2 id="storyTitle" class="story-title">// LOG</h2>
+      <pre id="storyBody" class="story-body"></pre>
+      <button id="storyContinue" class="primary">DEVAM ›</button>
+    </div>
+  </section>
+
+  <!-- ===== GAME ===== -->
+  <section id="screenGame" class="screen">
+    <main class="frame">
+      <header class="hud">
+        <div class="title">// TIME&nbsp;ECHO</div>
+        <div class="stats">
+          <span>HAMLE <b id="movesLeft">10</b></span>
+          <span>ECHO <b id="echoCount">0</b></span>
+          <span>SEVİYE <b id="levelNum">1</b></span>
+          <span class="hud-ver" id="hudVersion">v?.?.?</span>
+          <button class="hud-btn" data-act="menu">MENÜ</button>
+        </div>
+      </header>
+
+      <section class="stage">
+        <canvas id="board" width="640" height="640"></canvas>
+        <div id="overlay" class="overlay hidden">
+          <div class="overlay-card">
+            <h2 id="overlayTitle">STABILIZED</h2>
+            <p id="overlayBody">Zaman çizgisi sabitlendi.</p>
+            <div class="overlay-btns">
+              <button id="overlayBtn">DEVAM</button>
+              <button id="overlayBtn2" class="ghost">MENÜ</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="legend">
+        <span>◆ sen</span>
+        <span>◇ echo</span>
+        <span>✦ hedef</span>
+        <span>○ plaka</span>
+        <span>▤ kapı</span>
+        <span>◉ portal</span>
+        <span>► lazer</span>
+        <span>■ duvar</span>
+        <span class="keys">[OK / WASD] hareket · [R] echo kaydet · [Z] son echo'yu sil · [N] sıfırla · [M] sustur</span>
+      </footer>
+    </main>
+  </section>
+
+  <!-- ===== EDITOR ===== -->
+  <section id="screenEditor" class="screen">
+    <div class="editor-frame">
+      <header class="ed-header">
+        <h2>// EDİTÖR</h2>
+        <button id="edBack" class="back">‹ MENÜ</button>
+      </header>
+      <div class="ed-body">
+        <aside class="ed-side">
+          <div class="ed-row">
+            <label>AD</label>
+            <input id="edName" maxlength="32" />
+          </div>
+          <div class="ed-row">
+            <label>GİRİŞ METNİ</label>
+            <textarea id="edIntro" maxlength="200" rows="2"></textarea>
+          </div>
+          <div class="ed-row triple">
+            <div><label>EN</label><input id="edWidth" type="number" min="4" max="24" value="10" /></div>
+            <div><label>BOY</label><input id="edHeight" type="number" min="4" max="18" value="8" /></div>
+            <div><label>HAMLE</label><input id="edMoves" type="number" min="1" max="99" value="16" /></div>
+          </div>
+          <div class="ed-row">
+            <label>FIRÇA</label>
+            <div id="edToolbar" class="ed-toolbar"></div>
+          </div>
+          <div class="ed-actions">
+            <button id="edClear">TEMİZLE</button>
+            <button id="edTest" class="primary">TEST</button>
+            <button id="edShare" class="primary">PAYLAŞ</button>
+          </div>
+          <input id="edShareBox" class="share-box" readonly placeholder="paylaşım bağlantısı burada görünecek" />
+          <div id="edStatus" class="ed-status"></div>
+          <div class="ed-help">
+            sol-tık: yerleştir · sağ-tık: sil<br>
+            sürükleyerek boyayabilirsin<br>
+            P/G yalnızca bir tane olabilir<br>
+            lazerleri plaka ile bağlamak için: aynı renk plaka ile aynı satır/sütundaki yayıcı otomatik eşleşmez — kod düzeyinde tanımlanır (TEST'te varsayılan: tüm lazerler her zaman açık).
+          </div>
+        </aside>
+        <main class="ed-canvas-wrap">
+          <canvas id="editorCanvas" width="640" height="640"></canvas>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <script src="version.js"></script>
+  <script src="audio.js"></script>
+  <script src="music.js"></script>
+  <script src="story.js"></script>
+  <script src="levels.js"></script>
+  <script src="editor.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

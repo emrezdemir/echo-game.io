@@ -1,0 +1,20 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Local server / build artefactları (varsa)
+node_modules/
+dist/
+.cache/
+
+# Yerel ayarlar
+.env
+.env.local
