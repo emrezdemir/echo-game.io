@@ -1,168 +1,142 @@
-// Seviyeler arasında oyuncuya gösterilen log girdileri.
-// Ana karakter: Mühendis V. Aren — terk edilmiş Kepler-7b araştırma istasyonu.
+// İki dilde hikâye girdileri.
+// Erişim için: getStory() çağrısı mevcut dile göre obje döner.
 
-const STORY = {
-  intro: {
-    title: "// SİSTEM YENİDEN BAŞLATILDI",
-    lines: [
-      "TARİH: 2387.04.11 / KEPLER-7b YÖRÜNGE İSTASYONU",
-      "",
-      "Soğuk uyku kapsülünden kaç saat sonra uyandım, bilmiyorum.",
-      "İstasyon sessiz. Ekipten kimse yok. Sadece ben.",
-      "",
-      "Reaktör çekirdeğine ulaşırsam çıkış yapabilirim.",
-      "Ama koridorlar arasında bir şey... yanlış.",
-      "Hareketlerim kayıt altına alınıyor — ve geri çağrıldığında",
-      "geçmişteki ben yeniden yürüyor. Yankı gibi.",
-      "",
-      "Hayatta kalmanın tek yolu, kendimle işbirliği yapmak.",
+const STORY_DATA = {
+  tr: {
+    intro: {
+      title: "// SİSTEM YENİDEN BAŞLATILDI",
+      lines: [
+        "TARİH: 2387.04.11 / KEPLER-7b YÖRÜNGE İSTASYONU",
+        "",
+        "Soğuk uyku kapsülünden kaç saat sonra uyandım, bilmiyorum.",
+        "İstasyon sessiz. Ekipten kimse yok. Sadece ben.",
+        "",
+        "Reaktör çekirdeğine ulaşırsam çıkış yapabilirim.",
+        "Ama koridorlar arasında bir şey... yanlış.",
+        "Hareketlerim kayıt altına alınıyor — ve geri çağrıldığında",
+        "geçmişteki ben yeniden yürüyor. Yankı gibi.",
+        "",
+        "Hayatta kalmanın tek yolu, kendimle işbirliği yapmak.",
+      ],
+    },
+    tutorial: [
+      {
+        title: "EĞİTİM 1/4 · HAREKET",
+        lines: [
+          "OK TUŞLARI veya WASD ile hareket edersin.",
+          "",
+          "Ekrandaki ◆ sembolü sensin.",
+          "Altın ✦ sembolü hedefin (reaktör çıkışı).",
+          "",
+          "Her hamle sağ üstteki HAMLE sayacını bir azaltır.",
+          "Sayaç sıfırlandığında hamlelerini boşa harcamış olursun.",
+          "",
+          "› AMAÇ: ◆ sembolünü ✦ hedefine ulaştırmak.",
+        ],
+      },
+      {
+        title: "EĞİTİM 2/4 · PLAKA & KAPI",
+        lines: [
+          "Bazı yollarda ▤ sembollü KAPI'lar var. Kapalıyken geçemezsin.",
+          "Her kapının (A,B,C...) bir eşi olan PLAKA'sı vardır (a,b,c...).",
+          "",
+          "BİR VARLIK plakanın üzerinde durduğu sürece kapı AÇIK kalır.",
+          "Plaka boşsa kapı tekrar kapanır.",
+          "",
+          "Sorun: Sen aynı anda hem plakada DURAMAZSIN hem de",
+          "kapıdan GEÇEMEZSİN. İki yerde olamazsın...",
+          "",
+          "› ÇÖZÜM: kendi yankını kullan. Sıradaki sayfa.",
+        ],
+      },
+      {
+        title: "EĞİTİM 3/4 · YANKI KAYDETMEK",
+        lines: [
+          "Yaptığın her hareket bir bant gibi kaydediliyor.",
+          "İstediğin zaman [R] tuşuna bas:",
+          "",
+          "  1. O ana kadar yaptığın hamleler bir YANKI olur (◇)",
+          "  2. Sen başlangıç noktasına geri ışınlanırsın",
+          "  3. Hamle sayacın sıfırlanır",
+          "  4. Yankı, kaydettiğin hamleleri AYNEN tekrarlar",
+          "",
+          "Artık iki kişisin: sen + yankın. Yankı plakaya basabilir,",
+          "sen başka bir şey yapabilirsin. [Z] son yankıyı silmek için.",
+        ],
+      },
+      {
+        title: "EĞİTİM 4/4 · ÖRNEK",
+        lines: [
+          "İlk seviyenin tipik çözümü:",
+          "",
+          "  ① ◆ → plakaya (◯) yürü.   Hamle: → → ↓",
+          "  ② [R] bas.   Yankın artık plakaya yürüyor olacak.",
+          "  ③ Yankı plakada → kapı açılır.",
+          "  ④ Sen başka bir yoldan ✦ hedefe yürü.",
+          "",
+          "İPUCU: Hamleleri planla. Yankı senin geçmişin —",
+          "neyi yaptırdıysan onu yapacak, daha fazlasını değil.",
+          "",
+          "› BAŞLAYALIM. İyi şanslar, mühendis.",
+        ],
+      },
     ],
-  },
-
-  // İlk seviyeden önce gösterilen 4 sayfalık tutorial.
-  tutorial: [
-    {
-      title: "EĞİTİM 1/4 · HAREKET",
-      lines: [
-        "OK TUŞLARI veya WASD ile hareket edersin.",
-        "",
-        "Ekrandaki ◆ sembolü sensin.",
-        "Altın ✦ sembolü hedefin (reaktör çıkışı).",
-        "",
-        "Her hamle sağ üstteki HAMLE sayacını bir azaltır.",
-        "Sayaç sıfırlandığında hamlelerini boşa harcamış olursun.",
-        "",
-        "› AMAÇ: ◆ sembolünü ✦ hedefine ulaştırmak.",
-      ],
-    },
-    {
-      title: "EĞİTİM 2/4 · PLAKA & KAPI",
-      lines: [
-        "Bazı yollarda ▤ sembollü KAPI'lar var. Kapalıyken geçemezsin.",
-        "Her kapının (A,B,C...) bir eşi olan PLAKA'sı vardır (a,b,c...).",
-        "",
-        "BİR VARLIK plakanın üzerinde durduğu sürece kapı AÇIK kalır.",
-        "Plaka boşsa kapı tekrar kapanır.",
-        "",
-        "Sorun: Sen aynı anda hem plakada DURAMAZSIN hem de",
-        "kapıdan GEÇEMEZSİN. İki yerde olamazsın...",
-        "",
-        "› ÇÖZÜM: kendi yankını kullan. Sıradaki sayfa.",
-      ],
-    },
-    {
-      title: "EĞİTİM 3/4 · YANKI KAYDETMEK",
-      lines: [
-        "Yaptığın her hareket bir bant gibi kaydediliyor.",
-        "İstediğin zaman [R] tuşuna bas:",
-        "",
-        "  1. O ana kadar yaptığın hamleler bir YANKI olur (◇)",
-        "  2. Sen başlangıç noktasına geri ışınlanırsın",
-        "  3. Hamle sayacın sıfırlanır",
-        "  4. Yankı, kaydettiğin hamleleri AYNEN tekrarlar",
-        "",
-        "Artık iki kişisin: sen + yankın. Yankı plakaya basabilir,",
-        "sen başka bir şey yapabilirsin. [Z] son yankıyı silmek için.",
-      ],
-    },
-    {
-      title: "EĞİTİM 4/4 · ÖRNEK",
-      lines: [
-        "İlk seviyenin tipik çözümü:",
-        "",
-        "  ① ◆ → plakaya (◯) yürü.   Hamle: → → ↓",
-        "  ② [R] bas.   Yankın artık plakaya yürüyor olacak.",
-        "  ③ Yankı plakada → kapı açılır.",
-        "  ④ Sen başka bir yoldan ✦ hedefe yürü.",
-        "",
-        "İPUCU: Hamleleri planla. Yankı senin geçmişin —",
-        "neyi yaptırdıysan onu yapacak, daha fazlasını değil.",
-        "",
-        "› BAŞLAYALIM. İyi şanslar, mühendis.",
-      ],
-    },
-  ],
-
-  // index = level idx; gösterilen log seviye TAMAMLANDIKTAN sonra çıkar
-  afterLevel: [
-    {
-      title: "LOG-001 / İLK YANKI",
-      lines: [
+    afterLevel: [
+      { title: "LOG-001 / İLK YANKI", lines: [
         "İşe yaradı. Plakaya benzer bir alan basılı kalmalıydı —",
         "ben başka yerdeyken. Çözüm: kendi kopyamı orada bırakmak.",
         "",
         "Onu izledim. Aynı adımları attı. Beni hiç fark etmedi.",
         "Bu... yankı mıyım, ben miyim, yoksa o mu?",
-      ],
-    },
-    {
-      title: "LOG-002 / İKİZLER",
-      lines: [
+      ] },
+      { title: "LOG-002 / İKİZLER", lines: [
         "İki yankı, iki kapı. Hiçbiri benim değil; hepsi benim.",
         "Aynı anda üç yerdeydim — sadece biri 'şimdi' idi.",
         "",
         "Reaktör loglarına göre bu olay 'temporal echo cascade'",
         "olarak adlandırılmış. 2384'te bir test patladı.",
         "Bu istasyon o zamandan beri çoğullaşıyormuş.",
-      ],
-    },
-    {
-      title: "LOG-003 / BAĞLANTI",
-      lines: [
+      ] },
+      { title: "LOG-003 / BAĞLANTI", lines: [
         "Üçüncü plaka aktive olduğunda, duvarın arkasından",
         "bir uğultu duydum. Sanki yankılarım orada hâlâ yürüyor —",
         "ben gittikten sonra.",
         "",
         "Belki gitmiyorum. Belki sadece dikkatimi çekenler",
         "şu anki bedenimde topluyor.",
-      ],
-    },
-    {
-      title: "LOG-004 / KÖPRÜ",
-      lines: [
+      ] },
+      { title: "LOG-004 / KÖPRÜ", lines: [
         "İstasyonun bu bölümünde uzay-zaman tutmuyor.",
         "Bir hücreden çıkıyorum, çift olan diğer hücreden çıkıyorum.",
         "Bohm-Aharonov kapıları. Teori 2381'de kâğıt üstündeydi.",
         "",
         "Aynı yankı, iki yerden çıktı. Hangisi önceydi?",
         "Soruyu unutuyorum. Cevap aynı.",
-      ],
-    },
-    {
-      title: "LOG-005 / IŞIN",
-      lines: [
+      ] },
+      { title: "LOG-005 / IŞIN", lines: [
         "Reaktör koridorlarında savunma lazerleri hâlâ aktif.",
         "Bir yankımı kaybettim — beam onu aldı, eridi.",
         "",
         "Sonraki çalıştırmada o yankı yine vardı. Tabii ki.",
         "Yankılar ölmez. Sadece ben ölürüm. Bunu unutmamalıyım.",
-      ],
-    },
-    {
-      title: "LOG-006 / KESİŞİM",
-      lines: [
+      ] },
+      { title: "LOG-006 / KESİŞİM", lines: [
         "Plaka bir lazeri kapatıyor. Diğeri bir kapıyı açıyor.",
         "Üçüncüsü hangi gerçeklikte olduğumu seçiyor sanki.",
         "",
         "Reaktöre çok yaklaştım. Sıcaklık artıyor.",
         "Soğutucular çevrimdışı. Birisi onları kapattı.",
         "Belki gelecekteki ben.",
-      ],
-    },
-    {
-      title: "LOG-007 / PARADOKS",
-      lines: [
+      ] },
+      { title: "LOG-007 / PARADOKS", lines: [
         "Bir yankımın diğer bir yankımı plaka aracılığıyla",
         "kurtardığını izledim. Ben hiçbir şey yapmadım — sadece",
         "iki geçmişteki ben birbirini sırtladı.",
         "",
         "Belki ben gereksizim. Belki yankılar zaten çıkıyor",
         "ve benim rolüm sadece kayıt cihazı olmak.",
-      ],
-    },
-    {
-      title: "LOG-008 / ÇÖKÜŞ",
-      lines: [
+      ] },
+      { title: "LOG-008 / ÇÖKÜŞ", lines: [
         "Reaktör çekirdeğindeyim. Uyandıktan sonra kaç döngü",
         "geçtiğini bilmiyorum. Kaç ben olduğumu bilmiyorum.",
         "",
@@ -173,22 +147,187 @@ const STORY = {
         "okuyacağız. Bir sonraki ben için yazıyorum.",
         "",
         "Ya da bu logları zaten ben okudum.",
+      ] },
+    ],
+    outro: {
+      title: "// STABILIZED",
+      lines: [
+        "Tekillik kapandı. İstasyon sessiz.",
+        "Kepler-7b'nin yörüngesinde, kapsülde uyanıyorum.",
+        "",
+        "Uyandıktan sonra kaç saat geçtiğini bilmiyorum.",
+        "İstasyon sessiz. Ekipten kimse yok. Sadece ben.",
+        "",
+        "...",
+        "",
+        "Bu logu daha önce yazmıştım.",
       ],
     },
-  ],
+  },
 
-  outro: {
-    title: "// STABILIZED",
-    lines: [
-      "Tekillik kapandı. İstasyon sessiz.",
-      "Kepler-7b'nin yörüngesinde, kapsülde uyanıyorum.",
-      "",
-      "Uyandıktan sonra kaç saat geçtiğini bilmiyorum.",
-      "İstasyon sessiz. Ekipten kimse yok. Sadece ben.",
-      "",
-      "...",
-      "",
-      "Bu logu daha önce yazmıştım.",
+  en: {
+    intro: {
+      title: "// SYSTEM REBOOTED",
+      lines: [
+        "DATE: 2387.04.11 / KEPLER-7b ORBITAL STATION",
+        "",
+        "I don't know how many hours since I woke from cryosleep.",
+        "The station is silent. None of the crew. Just me.",
+        "",
+        "If I reach the reactor core, I can launch the escape pod.",
+        "But something in these corridors is... wrong.",
+        "My movements are being recorded — and when replayed,",
+        "a past version of me walks again. Like an echo.",
+        "",
+        "The only way to survive is to cooperate with myself.",
+      ],
+    },
+    tutorial: [
+      {
+        title: "TUTORIAL 1/4 · MOVEMENT",
+        lines: [
+          "Move with ARROW KEYS or WASD.",
+          "",
+          "The ◆ on screen is you.",
+          "The golden ✦ is your goal (the reactor exit).",
+          "",
+          "Each move decrements the MOVES counter top-right.",
+          "When it hits zero, you've wasted your moves.",
+          "",
+          "› GOAL: get ◆ to the ✦.",
+        ],
+      },
+      {
+        title: "TUTORIAL 2/4 · PLATE & DOOR",
+        lines: [
+          "Some paths have ▤ DOORS. You can't pass when closed.",
+          "Each door (A,B,C...) has a paired PLATE (a,b,c...).",
+          "",
+          "While SOMEONE is standing on the plate, the door is OPEN.",
+          "Empty plate → door closes again.",
+          "",
+          "Problem: you can't STAND on the plate AND PASS through",
+          "the door at the same time. You can't be in two places...",
+          "",
+          "› SOLUTION: use your own echo. Next page.",
+        ],
+      },
+      {
+        title: "TUTORIAL 3/4 · RECORDING ECHOES",
+        lines: [
+          "Every move you make is recorded onto a tape.",
+          "Whenever you want, press [R]:",
+          "",
+          "  1. Your moves so far become an ECHO (◇)",
+          "  2. You teleport back to the start",
+          "  3. The MOVES counter resets",
+          "  4. The echo replays the recorded moves EXACTLY",
+          "",
+          "Now you're two: you + your echo. The echo can hold a plate",
+          "while you do something else. [Z] to undo the last echo.",
+        ],
+      },
+      {
+        title: "TUTORIAL 4/4 · EXAMPLE",
+        lines: [
+          "Typical solution for level 1:",
+          "",
+          "  ① ◆ → walk to the plate (◯).   Moves: → → ↓",
+          "  ② Press [R].   Your echo will now walk to the plate.",
+          "  ③ Echo on plate → door opens.",
+          "  ④ You take a different path to the ✦.",
+          "",
+          "TIP: Plan your moves. The echo IS your past —",
+          "it does what you did, nothing more.",
+          "",
+          "› LET'S GO. Good luck, engineer.",
+        ],
+      },
     ],
+    afterLevel: [
+      { title: "LOG-001 / FIRST ECHO", lines: [
+        "It worked. The plate had to stay pressed —",
+        "while I was elsewhere. Solution: leave a copy of myself.",
+        "",
+        "I watched him. He took the same steps. Never noticed me.",
+        "Am I the echo, or him, or neither?",
+      ] },
+      { title: "LOG-002 / TWINS", lines: [
+        "Two echoes, two doors. None of them are me; all are me.",
+        "I was in three places at once — only one was 'now'.",
+        "",
+        "The reactor logs call it a 'temporal echo cascade'.",
+        "An experiment ruptured in 2384.",
+        "The station has been multiplying ever since.",
+      ] },
+      { title: "LOG-003 / LINKED", lines: [
+        "When the third plate activated, I heard a hum",
+        "from behind the wall. As if my echoes were still walking",
+        "after I'd left.",
+        "",
+        "Maybe I don't leave. Maybe only what I notice",
+        "collapses into this body, here, now.",
+      ] },
+      { title: "LOG-004 / BRIDGE", lines: [
+        "Spacetime doesn't hold in this section.",
+        "I exit one cell, I exit the paired one.",
+        "Bohm-Aharonov gates. Theory was on paper in 2381.",
+        "",
+        "The same echo came out of two places. Which was first?",
+        "I forget the question. The answer is the same.",
+      ] },
+      { title: "LOG-005 / BEAM", lines: [
+        "The defense lasers in the reactor halls are still active.",
+        "I lost an echo — the beam took her, dissolved her.",
+        "",
+        "Next run she was back. Of course.",
+        "Echoes don't die. Only I die. I must remember that.",
+      ] },
+      { title: "LOG-006 / INTERSECTION", lines: [
+        "One plate disables a laser. Another opens a door.",
+        "A third seems to choose which reality I'm in.",
+        "",
+        "I'm close to the reactor. Temperature rising.",
+        "Coolant offline. Someone shut it down.",
+        "Maybe a future me.",
+      ] },
+      { title: "LOG-007 / PARADOX", lines: [
+        "I watched one of my echoes save another via the plate.",
+        "I did nothing — two past versions of me carried each other.",
+        "",
+        "Maybe I'm redundant. Maybe the echoes are escaping",
+        "and my role is just to be the recorder.",
+      ] },
+      { title: "LOG-008 / COLLAPSE", lines: [
+        "I'm at the reactor core. I don't know how many loops",
+        "have passed since I woke. I don't know how many of me there are.",
+        "",
+        "But I remember the exit procedure: stabilize all echoes,",
+        "close the singularity, return to the pod.",
+        "",
+        "If I wake up again — if WE wake up again — we will read",
+        "these logs. I'm writing for the next me.",
+        "",
+        "Or I've already read these logs.",
+      ] },
+    ],
+    outro: {
+      title: "// STABILIZED",
+      lines: [
+        "Singularity sealed. The station is silent.",
+        "I wake in the pod, in orbit around Kepler-7b.",
+        "",
+        "I don't know how many hours have passed.",
+        "The station is silent. None of the crew. Just me.",
+        "",
+        "...",
+        "",
+        "I've written this log before.",
+      ],
+    },
   },
 };
+
+function getStory() { return STORY_DATA[I18n.get()] || STORY_DATA.tr; }
+// Geriye uyumluluk: STORY referansları çalışmaya devam etsin.
+const STORY = new Proxy({}, { get: (_, key) => getStory()[key] });

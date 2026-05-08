@@ -5,6 +5,21 @@ Format: [Anlamsal Sürüm](https://semver.org/lang/tr/) · tarih · kısa özet.
 
 ---
 
+## [1.5.0] — 2026-05-08
+**"Babel"**
+### Eklendi
+- `i18n.js` — TR/EN sözlüğü, `localStorage`'da kalıcı dil tercihi.
+- Tüm UI metinleri iki dilde: menü, HUD, overlay'ler, editör, eğitim, hikâye logları, sürüm geçmişi.
+- Seviye `name`/`intro` alanları artık `{tr, en}` objesi; helper `levelText(lvl, field)` aktif dile göre seçer.
+- `STORY_DATA` iki dilli; `STORY` proxy'si dile göre canlı çözer.
+- Ana menüde **DİL: TR/EN** tuşu — anlık değişim, kayıt, tüm açık ekran yenilenir.
+- HTML elementleri için `data-i18n`, `data-i18n-html`, `data-i18n-placeholder` attribute desteği.
+### Değişti
+- Tarayıcı diline göre ilk dil otomatik belirlenir (TR varsayılan).
+- Sürüm changelog girdileri (`history[].changes`) iki dilli yapı kazandı.
+
+---
+
 ## [1.4.2] — 2026-05-08
 **"Fallback routing"**
 ### Düzeltildi

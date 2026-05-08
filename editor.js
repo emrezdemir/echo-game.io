@@ -10,30 +10,30 @@ const Editor = (() => {
   const shareBox = () => document.getElementById("edShareBox");
 
   const TOOLS = [
-    { key: ".", label: "ZEMİN" },
-    { key: "#", label: "DUVAR" },
-    { key: "P", label: "BAŞLANGIÇ" },
-    { key: "G", label: "HEDEF" },
-    { key: "a", label: "PLAKA a" },
-    { key: "A", label: "KAPI A" },
-    { key: "b", label: "PLAKA b" },
-    { key: "B", label: "KAPI B" },
-    { key: "c", label: "PLAKA c" },
-    { key: "C", label: "KAPI C" },
-    { key: "1", label: "PORTAL 1" },
-    { key: "2", label: "PORTAL 2" },
-    { key: ">", label: "LAZER →" },
-    { key: "<", label: "LAZER ←" },
-    { key: "^", label: "LAZER ↑" },
-    { key: "v", label: "LAZER ↓" },
+    { key: ".", labelKey: "tool.floor" },
+    { key: "#", labelKey: "tool.wall" },
+    { key: "P", labelKey: "tool.start" },
+    { key: "G", labelKey: "tool.goal" },
+    { key: "a", labelKey: "tool.plate", suffix: " a" },
+    { key: "A", labelKey: "tool.door",  suffix: " A" },
+    { key: "b", labelKey: "tool.plate", suffix: " b" },
+    { key: "B", labelKey: "tool.door",  suffix: " B" },
+    { key: "c", labelKey: "tool.plate", suffix: " c" },
+    { key: "C", labelKey: "tool.door",  suffix: " C" },
+    { key: "1", labelKey: "tool.portal", suffix: " 1" },
+    { key: "2", labelKey: "tool.portal", suffix: " 2" },
+    { key: ">", labelKey: "tool.laser",  suffix: " →" },
+    { key: "<", labelKey: "tool.laser",  suffix: " ←" },
+    { key: "^", labelKey: "tool.laser",  suffix: " ↑" },
+    { key: "v", labelKey: "tool.laser",  suffix: " ↓" },
   ];
 
   let state = {
     w: 10,
     h: 8,
     moves: 16,
-    name: "ÖZEL SEVİYE",
-    intro: "Kendi yankı düzeneğin.",
+    name: null,   // open() sırasında I18n'den çekilir
+    intro: null,
     grid: null,        // h x w array of chars
     lasers: [],        // [{x,y,plate}]
     tool: "#",
@@ -84,7 +84,7 @@ const Editor = (() => {
     TOOLS.forEach(t => {
       const btn = document.createElement("button");
       btn.className = "tool" + (state.tool === t.key ? " active" : "");
-      btn.textContent = t.label;
+      btn.textContent = I18n.t(t.labelKey) + (t.suffix || "");
       btn.dataset.key = t.key;
       btn.onclick = () => {
         state.tool = t.key;
@@ -180,7 +180,7 @@ const Editor = (() => {
     movesInput().oninput = (e) => {
       state.moves = clamp(parseInt(e.target.value) || 10, 1, 99);
     };
-    nameInput().oninput = (e) => state.name = (e.target.value || "ÖZEL").slice(0, 32);
+    nameInput().oninput = (e) => state.name = (e.target.value || I18n.t("ed.customLabel")).slice(0, 32);
     introInput().oninput = (e) => state.intro = (e.target.value || "").slice(0, 200);
 
     document.getElementById("edClear").onclick = () => {
@@ -200,7 +200,7 @@ const Editor = (() => {
       shareBox().select();
       try { document.execCommand("copy"); } catch (e) {}
       Audio.record();
-      flashStatus("BAĞLANTI KOPYALANDI");
+      flashStatus(I18n.t("ed.linkCopied"));
     };
     document.getElementById("edBack").onclick = () => {
       Audio.click();
@@ -238,7 +238,7 @@ const Editor = (() => {
       const json = decodeURIComponent(escape(atob(padded)));
       const o = JSON.parse(json);
       return {
-        name: o.n || "PAYLAŞILAN",
+        name: o.n || I18n.t("ed.shared"),
         intro: o.i || "",
         moves: o.m || 16,
         grid: o.g,
@@ -251,6 +251,8 @@ const Editor = (() => {
   }
 
   function open() {
+    if (!state.name)  state.name  = I18n.t("ed.defaultName");
+    if (!state.intro) state.intro = I18n.t("ed.defaultIntro");
     state.grid = emptyGrid(state.w, state.h);
     widthInput().value = state.w;
     heightInput().value = state.h;
@@ -262,6 +264,11 @@ const Editor = (() => {
     bind();
     render();
   }
+
+  // Dil değişince toolbar etiketlerini yenile
+  document.addEventListener("i18n:changed", () => {
+    if (document.getElementById("screenEditor").classList.contains("active")) buildToolbar();
+  });
 
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 

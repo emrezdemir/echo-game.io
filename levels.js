@@ -8,12 +8,16 @@
 //   1-9 portal (aynı rakamlı iki portal birbirine ışınlar)
 //   ^v<>  lazer yayıcı
 //
-// level.lasers = [{x,y,plate}] → o yayıcı 'plate' aktifken söner.
+// İsim ve intro alanları iki dilli: { tr: "...", en: "..." }
+// game.js içindeki levelText() helper'ı mevcut dile göre seçer.
 
 const LEVELS = [
   {
-    name: "İLK YANKI",
-    intro: "① Plakaya (◯ a) yürü.  ② [R] tuşuna bas — yankın oluşur.  ③ Sen başa dönersin, yankı plakaya yürür → A kapısı açılır.  ④ Sen ✦ hedefe geç.",
+    name:  { tr: "İLK YANKI",       en: "FIRST ECHO" },
+    intro: {
+      tr: "① Plakaya (◯ a) yürü.  ② [R] tuşuna bas — yankın oluşur.  ③ Sen başa dönersin, yankı plakaya yürür → A kapısı açılır.  ④ Sen ✦ hedefe geç.",
+      en: "① Walk to the plate (◯ a).  ② Press [R] — your echo is born.  ③ You teleport back, the echo walks to the plate → door A opens.  ④ You walk to the ✦ goal.",
+    },
     moves: 10,
     grid: [
       "#######",
@@ -26,8 +30,9 @@ const LEVELS = [
   },
 
   {
-    name: "ÇİFT DOLAŞIK",
-    intro: "İki plaka, iki kapı. Üç zaman çizgisi gerek.",
+    name:  { tr: "ÇİFT DOLAŞIK",    en: "TWIN ENTANGLED" },
+    intro: { tr: "İki plaka, iki kapı. Üç zaman çizgisi gerek.",
+             en: "Two plates, two doors. You need three timelines." },
     moves: 18,
     grid: [
       "##########",
@@ -43,8 +48,9 @@ const LEVELS = [
   },
 
   {
-    name: "ÜÇ EŞZAMANLI",
-    intro: "Üç plaka aynı anda aktif olmalı. Sen artı iki yankı.",
+    name:  { tr: "ÜÇ EŞZAMANLI",    en: "THREE SIMULTANEOUS" },
+    intro: { tr: "Üç plaka aynı anda aktif olmalı. Sen artı iki yankı.",
+             en: "Three plates active simultaneously. You plus two echoes." },
     moves: 24,
     grid: [
       "###########",
@@ -61,8 +67,9 @@ const LEVELS = [
   },
 
   {
-    name: "KÖPRÜ",
-    intro: "Eşli portallar. Aynı rakam birbirine bağlı.",
+    name:  { tr: "KÖPRÜ",           en: "BRIDGE" },
+    intro: { tr: "Eşli portallar. Aynı rakam birbirine bağlı.",
+             en: "Paired portals. Same digit links them." },
     moves: 16,
     grid: [
       "#########",
@@ -76,8 +83,9 @@ const LEVELS = [
   },
 
   {
-    name: "IŞIN",
-    intro: "Lazer ölümcül. Plaka aktifken yayıcı kapanır.",
+    name:  { tr: "IŞIN",            en: "BEAM" },
+    intro: { tr: "Lazer ölümcül. Plaka aktifken yayıcı kapanır.",
+             en: "The laser is lethal. Holding the plate disables the emitter." },
     moves: 16,
     grid: [
       "#########",
@@ -92,8 +100,9 @@ const LEVELS = [
   },
 
   {
-    name: "ÇÖKÜŞ",
-    intro: "Reaktör çekirdeği. Lazer + portal + iki plaka. Son adım.",
+    name:  { tr: "ÇÖKÜŞ",           en: "COLLAPSE" },
+    intro: { tr: "Reaktör çekirdeği. Lazer + portal + iki plaka. Son adım.",
+             en: "The reactor core. Laser + portal + two plates. Final step." },
     moves: 32,
     grid: [
       "###########",
@@ -109,3 +118,11 @@ const LEVELS = [
     lasers: [{ x: 1, y: 5, plate: "a" }],
   },
 ];
+
+// Helper: belirli bir seviye/saha için aktif dildeki metni getir.
+function levelText(lvl, field) {
+  const v = lvl && lvl[field];
+  if (typeof v === "string") return v;
+  if (v && typeof v === "object") return v[I18n.get()] || v.tr || "";
+  return "";
+}

@@ -173,7 +173,7 @@ const Game = (() => {
     customLevel = def;
     level = parseLevel(def);
     echoes = [];
-    levelNumEl.textContent = "ÖZEL";
+    levelNumEl.textContent = I18n.t("ed.customLabel");
     Screens.show("game");
     resetRun();
     showIntro();
@@ -353,7 +353,7 @@ const Game = (() => {
   function recordEcho() {
     if (busy || won) return;
     if (currentMoves.length === 0) {
-      flash("BOŞ KAYIT YOK");
+      flash(I18n.t("flash.noMoves"));
       return;
     }
     echoes.push({ moves: currentMoves.slice() });
@@ -363,7 +363,7 @@ const Game = (() => {
   function undoEcho() {
     if (busy) return;
     if (echoes.length === 0) {
-      flash("YANKI YOK");
+      flash(I18n.t("flash.noEcho"));
       return;
     }
     echoes.pop();
@@ -409,11 +409,11 @@ const Game = (() => {
   }
   function showIntro() {
     showOverlay({
-      title: level.def.name,
-      body: level.def.intro,
-      btnText: "BAŞLAT",
+      title: levelText(level.def, "name"),
+      body: levelText(level.def, "intro"),
+      btnText: I18n.t("ov.start"),
       action: () => {},
-      secondText: "MENÜ",
+      secondText: I18n.t("ov.menu"),
       secondAction: () => Screens.show("title"),
     });
   }
@@ -421,44 +421,44 @@ const Game = (() => {
     if (!isCustom) Save.markCleared(levelIdx);
     if (isCustom) {
       showOverlay({
-        title: "STABILIZED",
-        body: "Özel seviye tamamlandı.",
-        btnText: "EDİTÖRE DÖN",
+        title: I18n.t("ov.stabilized"),
+        body: I18n.t("ov.custom.win"),
+        btnText: I18n.t("ov.toEditor"),
         action: () => Screens.show("editor"),
       });
       return;
     }
     const isLast = levelIdx === LEVELS.length - 1;
     showOverlay({
-      title: "STABILIZED",
-      body: "Zaman çizgisi sabitlendi.",
-      btnText: isLast ? "OUTRO" : "DEVAM",
+      title: I18n.t("ov.stabilized"),
+      body: isLast ? I18n.t("ov.stabilized.last") : I18n.t("ov.stabilized.body"),
+      btnText: isLast ? I18n.t("ov.outro") : I18n.t("ov.continue"),
       action: () => {
         if (isLast) showStory(STORY.outro, () => Screens.show("title"));
         else showStory(STORY.afterLevel[levelIdx], () => loadLevel(levelIdx + 1));
       },
-      secondText: "MENÜ",
+      secondText: I18n.t("ov.menu"),
       secondAction: () => Screens.show("title"),
     });
   }
   function showAnnihilated() {
     showOverlay({
-      title: "ANNIHILATED",
-      body: "Lazer seni eritti. Tekrar dene.",
-      btnText: "TEKRAR",
+      title: I18n.t("ov.annihilated"),
+      body: I18n.t("ov.annihilated.body"),
+      btnText: I18n.t("ov.retry"),
       action: () => resetRun(),
-      secondText: "YANKILARI SİL",
+      secondText: I18n.t("ov.clearEchoes"),
       secondAction: () => fullReset(),
       fail: true,
     });
   }
   function showOutOfSync() {
     showOverlay({
-      title: "OUT OF SYNC",
-      body: "Hamleler tükendi. Yankıların sırada.",
-      btnText: "YENİ YANKI [R]",
+      title: I18n.t("ov.outOfSync"),
+      body: I18n.t("ov.outOfSync.body"),
+      btnText: I18n.t("ov.newEcho"),
       action: () => recordEcho(),
-      secondText: "SIFIRLA",
+      secondText: I18n.t("ov.reset"),
       secondAction: () => fullReset(),
       fail: true,
     });
@@ -738,9 +738,30 @@ const Game = (() => {
     const m = !Audio.isMuted();
     Audio.setMuted(m);
     if (typeof Music !== "undefined") Music.setMuted(m);
-    const btn = document.querySelector('[data-act="mute"]');
-    if (btn) btn.textContent = "SES: " + (m ? "KAPALI" : "AÇIK");
-    flash(m ? "SES KAPALI" : "SES AÇIK");
+    updateMuteLabel();
+    flash(I18n.t(m ? "flash.muted" : "flash.unmuted"));
+  }
+  function updateMuteLabel() {
+    const btn = document.getElementById("btnMute");
+    if (btn) btn.textContent = I18n.t(Audio.isMuted() ? "menu.sound.off" : "menu.sound.on");
+  }
+  function toggleLang() {
+    I18n.toggle();
+    updateMuteLabel();
+    // Aktif overlay'ı tazele
+    if (level && document.getElementById("screenGame").classList.contains("active") && busy) {
+      // tek satır intro overlay'ı yeniden çizmek için
+      hideOverlay();
+      showIntro();
+    }
+    // Seviye numarası etiketi
+    if (level) {
+      levelNumEl.textContent = isCustom ? I18n.t("ed.customLabel") : String(levelIdx + 1);
+    }
+    // Listeleri yeniden kur
+    if (document.getElementById("screenSelect").classList.contains("active")) buildLevelList();
+    if (document.getElementById("screenVersion").classList.contains("active")) buildVersionList();
+    flash(I18n.t("flash.lang"));
   }
 
   // ---------- Animation loop ----------
@@ -779,10 +800,12 @@ const Game = (() => {
     VERSION.history.forEach((entry, i) => {
       const block = document.createElement("div");
       block.className = "version-block" + (i === 0 ? " current" : "");
-      const items = entry.changes.map(c => `<li>${escapeHtml(c)}</li>`).join("");
+      const lang = I18n.get();
+      const changes = (entry.changes && entry.changes[lang]) || entry.changes.tr || entry.changes;
+      const items = (Array.isArray(changes) ? changes : []).map(c => `<li>${escapeHtml(c)}</li>`).join("");
       block.innerHTML = `
         <div class="vh">
-          <span class="vnum">v${entry.v}${i === 0 ? " · GÜNCEL" : ""}</span>
+          <span class="vnum">v${entry.v}${i === 0 ? I18n.t("ver.current") : ""}</span>
           <span class="vmeta">${entry.date}</span>
         </div>
         <div class="vcode">"${escapeHtml(entry.codename)}"</div>
@@ -807,7 +830,8 @@ const Game = (() => {
       card.className = "level-card";
       if (Save.isCleared(i)) card.classList.add("cleared");
       if (i > unlocked) card.classList.add("locked");
-      card.innerHTML = `<span class="num">SEVİYE ${String(i + 1).padStart(2, "0")} · ${lv.moves} HAMLE</span><span class="lname">${lv.name}</span>`;
+      const numLine = I18n.t("select.levelLine", String(i + 1).padStart(2, "0"), lv.moves);
+      card.innerHTML = `<span class="num">${escapeHtml(numLine)}</span><span class="lname">${escapeHtml(levelText(lv, "name"))}</span>`;
       card.onclick = () => {
         if (i > unlocked) { Audio.bump(); return; }
         Audio.click();
@@ -837,6 +861,8 @@ const Game = (() => {
           Screens.show("version");
         } else if (act === "mute") {
           toggleMute();
+        } else if (act === "lang") {
+          toggleLang();
         } else if (act === "title") {
           Screens.show("title");
         } else if (act === "menu") {
@@ -869,7 +895,9 @@ const Game = (() => {
   }
 
   function init() {
+    I18n.apply();
     applyVersionLabels();
+    updateMuteLabel();
     bindMenu();
     loop();
     if (!tryHashImport()) {
