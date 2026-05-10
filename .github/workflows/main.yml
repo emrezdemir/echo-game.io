@@ -1,0 +1,122 @@
+name: Deploy Time Echo via SSH
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'index.html'
+      - 'style.css'
+      - 'audio.js'
+      - 'editor.js'
+      - 'game.js'
+      - 'i18n.js'
+      - 'levels.js'
+      - 'music.js'
+      - 'story.js'
+      - 'version.js'
+      - 'music/**'
+      - '.github/workflows/deploy-ssh.yml'
+
+jobs:
+  deploy:
+    name: Deploy selected files to CloudPanel
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          VERSION=$(grep -oP 'number:\s*"\K[^"]+' version.js || echo "unknown")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Deploy version: $VERSION"
+
+      - name: Prepare deploy folder
+        shell: bash
+        run: |
+          set -e
+
+          rm -rf deploy-upload
+          mkdir -p deploy-upload
+
+          files=(
+            "index.html"
+            "style.css"
+            "audio.js"
+            "editor.js"
+            "game.js"
+            "i18n.js"
+            "levels.js"
+            "music.js"
+            "story.js"
+            "version.js"
+          )
+
+          echo "Preparing files..."
+
+          for file in "${files[@]}"; do
+            if [ -f "$file" ]; then
+              cp "$file" "deploy-upload/"
+              echo "Copied: $file"
+            else
+              echo "Missing, skipped: $file"
+            fi
+          done
+
+          if [ -d "music" ]; then
+            cp -r music deploy-upload/music
+            echo "Copied: music/"
+          else
+            echo "Missing, skipped: music/"
+          fi
+
+          echo ""
+          echo "Files ready for deploy:"
+          find deploy-upload -type f -print
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -e
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            -p "${{ secrets.SSH_PORT }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "echo 'SSH connection successful'"
+
+      - name: Create deploy directory
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            -p "${{ secrets.SSH_PORT }}" \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            "mkdir -p '${{ secrets.DEPLOY_PATH }}'"
+
+      - name: Deploy with rsync
+        shell: bash
+        run: |
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SSH_PORT }}" \
+            ./deploy-upload/ \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DEPLOY_PATH }}"
+
+      - name: Done
+        shell: bash
+        run: |
+          echo "Deploy completed."
+          echo "Version: ${{ steps.version.outputs.version }}"
