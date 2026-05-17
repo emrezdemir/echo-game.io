@@ -203,6 +203,8 @@ npx serve .
 
 Produces `echo-game-v<version>.zip` containing the HTML, CSS, JavaScript, music, and license files. Upload the archive to a static host and extract.
 
+The build is sub-path friendly. All asset references are relative and `index.html` declares `<base href="./">`, so extracting the archive into any directory (for example `public_html/time-echo/`) makes the game available at `https://your-host.example/time-echo/` without further configuration.
+
 ## AI-Native Development
 
 This project was developed iteratively in collaboration with [Claude Code](https://docs.anthropic.com/claude/docs/claude-code), Anthropic's CLI agent. The development model is documented here for transparency and as a reference for similar workflows.

@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.3] - 2026-05-17
+
+### Added
+- `<base href="./">` in `index.html` so every relative path resolves against the document directory. This allows the build to run under sub-paths such as `https://hbnf.net/time-echo/` without server-side rewrites.
+
+### Changed
+- Editor share URL is now built from `location.href` (stripped of any hash or query) so the sub-path of the current page is preserved.
+
 ## [1.15.2] - 2026-05-17
 
 ### Changed

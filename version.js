@@ -3,12 +3,29 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.15.2",
-  codename: "FIT",
+  number: "1.15.3",
+  codename: "SUBPATH",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.15.3",
+      date: "2026-05-17",
+      codename: "SUBPATH",
+      changes: {
+        tr: [
+          "index.html'e <base href=\"./\"> eklendi; tüm relatif path'ler doküman dizinine göre çözülüyor (sub-path deploy desteği)",
+          "Editör paylaşım URL'si location.href tabanında üretiliyor; sub-path ve query string'de bozulmuyor",
+          "https://hbnf.net/time-echo/ gibi alt yollarda kurulum sunucu rewrite'ı olmadan çalışıyor",
+        ],
+        en: [
+          "Added <base href=\"./\"> to index.html so every relative path resolves against the document directory (sub-path deployment support)",
+          "Editor share URL is built from location.href, surviving sub-paths and query strings",
+          "Deployment under sub-paths such as https://hbnf.net/time-echo/ works without server-side rewrites",
+        ],
+      },
+    },
     {
       v: "1.15.2",
       date: "2026-05-17",

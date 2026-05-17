@@ -199,7 +199,10 @@ const Editor = (() => {
     };
     document.getElementById("edShare").onclick = () => {
       const code = encodeLevel(exportLevel());
-      const url = location.origin + location.pathname + "#l=" + code;
+      // Build the share URL from the current document URL so any sub-path
+      // (e.g. /time-echo/) is preserved without depending on pathname tails.
+      const base = (location.href.split("#")[0]).split("?")[0];
+      const url = base + "#l=" + code;
       shareBox().value = url;
       shareBox().select();
       try { document.execCommand("copy"); } catch (e) {}
