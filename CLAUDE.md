@@ -33,6 +33,7 @@ index.html
 ├── webgl.js     — WebGLFX (post-processing shader pipeline)
 ├── sprite.js    — Sprite (PNG character animation engine)
 ├── effects.js   — Effects (PNG effect playback: portal, sparks, smoke)
+├── bark.js      — Bark (character thought-bubble lines)
 └── game.js      — Screens, Save, Game (main engine)
 ```
 
@@ -94,7 +95,7 @@ Load order matters. `game.js` depends on all preceding modules and must load las
 - Every release adds a block to `CHANGELOG.md`.
 - Semantic versioning: `MAJOR.MINOR.PATCH`.
 - `VERSION.history[].changes` is bilingual: `{ tr: [...], en: [...] }`.
-- Current main: `1.14.2`.
+- Current main: `1.15.0`.
 
 ## Smoke Test
 

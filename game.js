@@ -540,6 +540,7 @@ const Game = (() => {
     fx.echoLastMoveAt = [];
     fx.echoFacing = [];
     if (typeof Effects !== "undefined") Effects.clear();
+    if (typeof Bark !== "undefined") Bark.clear();
     hideOverlay();
     computeBeams();
     updateHUD();
@@ -717,9 +718,11 @@ const Game = (() => {
       if (dx !== 0) fx.playerFacing = dx > 0 ? 1 : -1;
       // Player tween
       fx.playerTween = { fromX: oldPx, fromY: oldPy, toX: player.x, toY: player.y, start: performance.now() };
+      if (typeof Bark !== "undefined") Bark.maybe("general", 0.06);
     } else {
       Audio.bump();
       shake(2, 120);
+      if (typeof Bark !== "undefined") Bark.maybe("general", 0.18);
     }
 
     // 2. Move echoes
@@ -833,8 +836,9 @@ const Game = (() => {
           if (typeof Effects !== "undefined") Effects.spawn("sparks", es.pos.x, es.pos.y);
         }
       });
-      if (player.dead && typeof Effects !== "undefined") {
-        Effects.spawn("sparks", player.x, player.y);
+      if (player.dead) {
+        if (typeof Effects !== "undefined") Effects.spawn("sparks", player.x, player.y);
+        if (typeof Bark !== "undefined") Bark.force("death");
       }
     }
 
@@ -868,6 +872,7 @@ const Game = (() => {
           }
         });
       }
+      if (player.dead && typeof Bark !== "undefined") Bark.force("death");
     }
 
     // 4.6. Kırılgan plaka latching — fragile listedeki plaka üzerinde canlı varlık varsa kapı sonsuza açık
@@ -935,6 +940,7 @@ const Game = (() => {
     fx._recordBurstAt = { x: player.x, y: player.y, t: performance.now() };
     const n = echoes.length;
     toast(I18n.t("toast.recorded", n), "success");
+    if (typeof Bark !== "undefined") Bark.maybe("record", 0.55);
     resetRun();
   }
   function undoEcho() {
@@ -1600,6 +1606,9 @@ const Game = (() => {
       const sinceMove = now - fx.playerLastMoveAt;
       const moving = sinceMove < 280;
       const walkPhase = moving ? (sinceMove / 280) : 0;
+      if (!player.dead && !moving && sinceMove > 5000 && typeof Bark !== "undefined") {
+        Bark.maybe("idle", 0.002);
+      }
       drawAstronaut(cx, cy, cell * 1.3, {
         theme: "player",
         alpha: 1,
@@ -1609,6 +1618,10 @@ const Game = (() => {
         moving,
         cell,
       });
+      if (typeof Bark !== "undefined" && Bark.isActive()) {
+        // Bubble sits just above the sprite's head (feet anchored at cell bottom).
+        Bark.draw(ctx, cx, cy - cell * 0.55);
+      }
     }
 
     // Particles (procedural)

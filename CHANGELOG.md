@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0] - 2026-05-17
+
+### Added
+- `bark.js` module: short thought-bubble lines emitted by the player character.
+- Trigger conditions: 6% chance on movement, 18% on wall bump, 55% on echo record, low-rate idle trigger after 5 seconds without movement, forced trigger on death.
+- Bilingual phrase pool (TR and EN) selected from current i18n language.
+- Bubble renders as a rounded box above the sprite head with a tail and a 400 ms fade.
+
+### Changed
+- `deploy.ps1` packages `bark.js`.
+
 ## [1.14.2] - 2026-05-17
 
 ### Fixed

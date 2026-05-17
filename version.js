@@ -3,12 +3,35 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.14.2",
-  codename: "STAND",
+  number: "1.15.0",
+  codename: "INNER_VOICE",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.15.0",
+      date: "2026-05-17",
+      codename: "INNER_VOICE",
+      changes: {
+        tr: [
+          "Yeni bark.js modülü: karakterin başında küçük düşünce balonu",
+          "1-2 kelimelik kısa replikler (şüphe, pişmanlık, soru, korku, panik, felsefe)",
+          "Tetikleyiciler: hareket (%6), duvara çarpma (%18), echo kaydı (%55), uzun bekleme",
+          "Ölüm anında panik repliği (zorunlu tetikleme)",
+          "İki dilli (TR/EN), i18n diline göre seçiliyor",
+          "Cooldown 2.5sn, ekran süresi 2.2sn, 400ms fade",
+        ],
+        en: [
+          "New bark.js module: small thought bubble above the character",
+          "1-2 word lines (doubt, regret, question, fear, panic, philosophy)",
+          "Triggers: movement (6%), wall bump (18%), echo record (55%), long idle",
+          "Death forces a panic line (no cooldown)",
+          "Bilingual (TR/EN), selected by current i18n language",
+          "2.5s cooldown, 2.2s display, 400ms fade",
+        ],
+      },
+    },
     {
       v: "1.14.2",
       date: "2026-05-17",

@@ -33,6 +33,7 @@ $files = @(
     "music.js",
     "sprite.js",
     "effects.js",
+    "bark.js",
     "story.js",
     "version.js",
     "webgl.js"
