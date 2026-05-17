@@ -3,12 +3,31 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.15.1",
-  codename: "CONTAIN",
+  number: "1.15.2",
+  codename: "FIT",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.15.2",
+      date: "2026-05-17",
+      codename: "FIT",
+      changes: {
+        tr: [
+          "Sprite kaynak PNG'lerinde karakter bounding box'u tanımlandı; çevredeki şeffaf padding artık çizilmiyor",
+          "Tüm animasyonlar için per-anim bbox: idle/run/hurt dikey, dead yatay duruş",
+          "Karakter cell'i tam dolduruyor (yükseklik cell, en aspect'e göre) — orantısızlık giderildi",
+          "Aspect oranı korunuyor; ayaklar cell tabanında kalıyor",
+        ],
+        en: [
+          "Source PNG sprites now declare a per-animation bounding box; the transparent padding is no longer drawn",
+          "Per-anim bbox: idle/run/hurt are tall, dead is wide",
+          "The character now fills the cell (height to cell, width by aspect) — the proportions match the grid",
+          "Aspect ratio preserved; feet remain anchored at the cell bottom",
+        ],
+      },
+    },
     {
       v: "1.15.1",
       date: "2026-05-17",

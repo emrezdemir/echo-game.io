@@ -6,11 +6,19 @@ const Sprite = (() => {
   const FRAME_W = 128;
   const FRAME_H = 128;
 
+  // The 128x128 frames carry significant transparent padding around the
+  // character. Each animation has its own approximate visible bounding box;
+  // the drawing layer crops to this region so the character fills its
+  // target cell instead of being lost in the padding.
   const FRAMES = {
-    idle: { src: "char/City_men_3/Idle.png", count: 6,  fps: 6 },
-    run:  { src: "char/City_men_3/Run.png",  count: 10, fps: 14 },
-    hurt: { src: "char/City_men_3/Hurt.png", count: 3,  fps: 12 },
-    dead: { src: "char/City_men_3/Dead.png", count: 5,  fps: 8 },
+    idle: { src: "char/City_men_3/Idle.png", count: 6,  fps: 6,
+            bbox: { x: 38, y: 18, w: 54, h: 102 } },
+    run:  { src: "char/City_men_3/Run.png",  count: 10, fps: 14,
+            bbox: { x: 28, y: 18, w: 72, h: 102 } },
+    hurt: { src: "char/City_men_3/Hurt.png", count: 3,  fps: 12,
+            bbox: { x: 32, y: 22, w: 64, h: 96 } },
+    dead: { src: "char/City_men_3/Dead.png", count: 5,  fps: 8,
+            bbox: { x: 18, y: 52, w: 94, h: 62 } },
   };
 
   const images = {};
@@ -65,12 +73,6 @@ const Sprite = (() => {
     ctx.restore();
   }
 
-  // The character pixels in each frame are concentrated in the upper-middle
-  // portion of the 128x128 box. Feet land at roughly 85% of the frame height.
-  // Anchoring at this ratio lines the character up with the bottom of the
-  // grid cell when the caller passes its cell size.
-  const FOOT_RATIO = 0.85;
-
   function draw(ctx, cx, cy, size, theme, state) {
     const alpha = state.alpha != null ? state.alpha : 1;
     const anim = pickAnim(state);
@@ -82,14 +84,28 @@ const Sprite = (() => {
     }
 
     const idx = frameIndex(anim, def, state);
-    const sx = idx * FRAME_W;
-    const dw = size;
-    const dh = size;
-    const dx = cx - dw / 2;
-    // Anchor by feet: if caller passes cell size, align character feet with
-    // the bottom of the cell so the figure visually stands inside the tile.
+    const bbox = def.bbox || { x: 0, y: 0, w: FRAME_W, h: FRAME_H };
+    const sx = idx * FRAME_W + bbox.x;
+    const sy = bbox.y;
+    const sw = bbox.w;
+    const sh = bbox.h;
+
+    // Fit the visible character into the target cell, preserving aspect.
+    // Tall poses (idle/run/hurt) fill the cell vertically; the dead pose is
+    // wide and fills horizontally.
     const cellSize = state.cell != null ? state.cell : size;
-    const dy = (cy + cellSize / 2) - dh * FOOT_RATIO;
+    const aspect = sw / sh;
+    let dh, dw;
+    if (aspect <= 1) {
+      dh = size;
+      dw = size * aspect;
+    } else {
+      dw = size;
+      dh = size / aspect;
+    }
+    const dx = cx - dw / 2;
+    // Feet (or body bottom for the dead pose) anchor at the cell floor.
+    const dy = (cy + cellSize / 2) - dh;
 
     ctx.save();
     ctx.imageSmoothingEnabled = false;
@@ -105,7 +121,7 @@ const Sprite = (() => {
       ctx.translate(-cx, -cy);
     }
 
-    ctx.drawImage(images[anim], sx, 0, FRAME_W, FRAME_H, dx, dy, dw, dh);
+    ctx.drawImage(images[anim], sx, sy, sw, sh, dx, dy, dw, dh);
     ctx.restore();
   }
 

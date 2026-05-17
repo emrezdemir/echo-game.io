@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.2] - 2026-05-17
+
+### Changed
+- Each sprite animation declares a bounding box of the visible character pixels (idle/run/hurt are tall, dead is wide). `Sprite.draw` crops to this region and fits it to the cell while preserving aspect ratio, so the character now occupies the tile properly instead of being lost in the surrounding transparent padding.
+- Feet (or body bottom for the dead pose) remain anchored to the bottom of the grid cell.
+
 ## [1.15.1] - 2026-05-17
 
 ### Changed
