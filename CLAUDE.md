@@ -92,7 +92,7 @@ Load order matters. `game.js` depends on all preceding modules and must load las
 - Every release adds a block to `CHANGELOG.md`.
 - Semantic versioning: `MAJOR.MINOR.PATCH`.
 - `VERSION.history[].changes` is bilingual: `{ tr: [...], en: [...] }`.
-- Current main: `1.12.0`.
+- Current main: `1.12.1`.
 
 ## Smoke Test
 

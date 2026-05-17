@@ -3,12 +3,29 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.12.0",
-  codename: "REBALANCE",
+  number: "1.12.1",
+  codename: "CHANNEL",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.12.1",
+      date: "2026-05-17",
+      codename: "CHANNEL",
+      changes: {
+        tr: [
+          "Lv9 Dalgalanma yeniden tasarlandı; quantum tile'lar dekoratif değil tek dikey geçit haline getirildi",
+          "Sağ koridor bypass'ı kapatıldı; oyuncu artık iki quantum tile'ı geçmek zorunda",
+          "Hamle bütçesi 20 → 22",
+        ],
+        en: [
+          "Lv9 Dalgalanma redesigned; quantum tiles are now the only vertical corridor",
+          "Right-corridor bypass closed; the player must cross two quantum tiles",
+          "Move budget 20 → 22",
+        ],
+      },
+    },
     {
       v: "1.12.0",
       date: "2026-05-17",

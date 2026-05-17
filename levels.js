@@ -149,15 +149,15 @@ let LEVELS = [
 
   {
     name:  { tr: "DALGALANMA",      en: "FLUCTUATION" },
-    intro: { tr: "Kuantum duvarlar + lazer. Zamanlama her şey. Sağ koridordan in, lazer dehlizine düş.",
-             en: "Quantum walls + laser. Timing is everything. Drop down the right corridor into the laser hall." },
-    moves: 20,
+    intro: { tr: "Tek dikey geçit iki kuantum hücresinden geçiyor. Yankın plaka 'a'yı tutarken lazer söner; sen Q'ların ritmini iki kez sayıp G'ye iniyorsun.",
+             en: "The only vertical corridor passes through two quantum cells. While your echo holds plate 'a', the laser is silent; you read the Q rhythm twice on the way down to G." },
+    moves: 22,
     grid: [
       "#########",
-      "#P......#",
-      "#.Q#Q#Q.#",
-      "#a......#",
-      "#.#####.#",
+      "#P.....a#",
+      "####Q####",
+      "#.......#",
+      "####Q####",
       "#>.....G#",
       "#########",
     ],
