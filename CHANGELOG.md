@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.2] - 2026-05-17
+
+### Fixed
+- Level 10 (Devriye): the sentry was outside the player's path. The grid was redesigned so the only route from door A to the goal crosses the sentry's lane.
+- Level 18 (Çukur): the portals were decorative because column 4 was open all the way from row 3 to row 7. Rows 4 and 6 were sealed so the portal pair is the only passage.
+- Level 21 (Sis): the portal was decorative because the player could reach the goal directly through the door. The grid was redesigned so the portal is the only access to the goal corridor.
+- Level 23 (Sonsuz Döngü): the quantum tile was off the critical path. It was moved from (4,5) to (7,5) so the player must time it when crossing from plate c to door C.
+
 ## [1.12.1] - 2026-05-17
 
 ### Fixed

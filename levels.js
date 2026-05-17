@@ -166,15 +166,16 @@ let LEVELS = [
 
   {
     name:  { tr: "DEVRİYE",         en: "SENTRY" },
-    intro: { tr: "Kırmızı devriye X her tur ileri-geri yürür. Kapı A tek geçittir; plakayı yankın tutar, sen X'in ritmini sayıp G'ye süzülürsün.",
-             en: "Red sentry X paces back and forth each turn. Door A is the only way through; echo holds the plate while you read X's rhythm to slip past to G." },
+    intro: { tr: "Kırmızı devriye X koridoru tarıyor. Kapı A tek giriş; G'ye varmak için devriyenin yürüdüğü koridoru aşmak zorundasın. Yankın plakayı tutar, sen X'in ritmini sayıp süzülürsün.",
+             en: "Red sentry X paces the corridor. Door A is the only entry; the only path to G crosses the sentry's lane. Echo holds the plate while you read X's rhythm." },
     moves: 28,
     grid: [
       "##########",
       "#P.....a.#",
       "####A#####",
-      "#........#",
-      "#...X...G#",
+      "#.X......#",
+      "########.#",
+      "#G.......#",
       "##########",
     ],
   },
@@ -302,15 +303,15 @@ let LEVELS = [
 
   {
     name:  { tr: "ÇUKUR",           en: "THE PIT" },
-    intro: { tr: "İki portal çifti seni yukarı-aşağı atar. Kapı A ilk koridoru kilitler — yankın plakayı tutmadan portal kuyusuna inemezsin.",
-             en: "Two portal pairs throw you up and down. Door A locks the first corridor — without your echo on the plate, you can't drop into the portal well." },
-    moves: 26,
+    intro: { tr: "İki portal çifti seni yukarı-aşağı atar. Kapı A ilk koridoru kilitler. Portal kuyusu yegane geçit — yankın olmadan plakayı tutamazsın.",
+             en: "Two portal pairs throw you up and down. Door A locks the first corridor and the portal well is the only way through — you need your echo on the plate." },
+    moves: 28,
     grid: [
       "###########",
       "#P..a.....#",
       "####A######",
       "#1.......2#",
-      "####.######",
+      "###########",
       "#2.......1#",
       "####.######",
       "#........G#",
@@ -355,19 +356,19 @@ let LEVELS = [
 
   {
     name:  { tr: "SİS",             en: "MIST" },
-    intro: { tr: "Kuantum geçit, portal sıçraması, lazer dehlizi — üçü birden. Plaka a hem lazeri söndürür hem A kapısını açar. Sen yine de ritmi tutmak zorundasın.",
-             en: "Quantum gate, portal jump, laser hall — all at once. Plate a both silences the laser and opens door A. You still have to keep the rhythm." },
-    moves: 28,
+    intro: { tr: "Kuantum geçit, portal sıçraması, lazer koridoru — üçü birden. Yankın plaka 'a'yı tutarken lazer söner; sen Q'yu zamanlayıp portala ulaşır, ışın dehlizine düşersin.",
+             en: "Quantum gate, portal jump, laser hall — all at once. Echo holds plate 'a' to silence the laser; you time Q to reach the portal and drop into the beam corridor." },
+    moves: 26,
     grid: [
       "###########",
       "#P..Q....1#",
       "####a######",
-      "#1>......A#",
-      "#########.#",
-      "#........G#",
+      "#.........#",
+      "###########",
+      "#>1......G#",
       "###########",
     ],
-    lasers: [{ x: 2, y: 3, plate: "a" }],
+    lasers: [{ x: 1, y: 5, plate: "a" }],
   },
 
   {
@@ -391,8 +392,8 @@ let LEVELS = [
 
   {
     name:  { tr: "SONSUZ DÖNGÜ",    en: "INFINITE LOOP" },
-    intro: { tr: "SON SINAV. Üç kapı, üç plaka (biri kırılgan), portal, kuantum, lazer, devriye. Mükemmel koreografi olmadan geçemezsin. Buradan canlı çıkarsan, gerçek bir zaman mühendisisin.",
-             en: "FINAL EXAM. Three doors, three plates (one fragile), portal, quantum, laser, sentry. You won't pass without perfect choreography. If you survive, you're a true time engineer." },
+    intro: { tr: "SON SINAV. Üç kapı, üç plaka (biri kırılgan), portal, kuantum, lazer, devriye. Mükemmel koreografi olmadan geçemezsin.",
+             en: "FINAL EXAM. Three doors, three plates (one fragile), portal, quantum, laser, sentry. You will not pass without perfect choreography." },
     moves: 56,
     grid: [
       "##############",
@@ -400,7 +401,7 @@ let LEVELS = [
       "######A#######",
       "#.X..........#",
       "######c#######",
-      "#>..Q....d...#",
+      "#>.....Q.d...#",
       "#######C######",
       "#......1.....#",
       "##############",

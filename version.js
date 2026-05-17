@@ -3,12 +3,31 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.12.1",
-  codename: "CHANNEL",
+  number: "1.12.2",
+  codename: "CRITICAL_PATH",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.12.2",
+      date: "2026-05-17",
+      codename: "CRITICAL_PATH",
+      changes: {
+        tr: [
+          "Lv10 Devriye: X devriyesi dekoratiftı, yeniden tasarlandı; oyuncu G'ye varmak için X'in koridorunu aşmak zorunda",
+          "Lv18 Çukur: portallar dekoratifti, row 4 ve row 6 kapatıldı; portal kuyusu tek geçit",
+          "Lv21 Sis: portal dekoratifti, yeniden tasarlandı; portal artık G'ye tek erişim",
+          "Lv23 Sonsuz Döngü: kuantum hücresi dekoratifti, (4,5)'ten (7,5)'e taşındı; oyuncu c plakasından C kapısına giderken Q'dan geçmek zorunda",
+        ],
+        en: [
+          "Lv10 Devriye: sentry was decorative, redesigned so the player must cross the sentry lane to reach G",
+          "Lv18 Çukur: portals were decorative; rows 4 and 6 sealed so the portal well is the only passage",
+          "Lv21 Sis: portal was decorative; redesigned so the portal is the only access to G",
+          "Lv23 Sonsuz Döngü: quantum tile was decorative; moved from (4,5) to (7,5) so the player must cross it from plate c to door C",
+        ],
+      },
+    },
     {
       v: "1.12.1",
       date: "2026-05-17",
