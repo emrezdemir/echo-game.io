@@ -3,12 +3,29 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.15.3",
-  codename: "SUBPATH",
+  number: "1.15.4",
+  codename: "BASEPATH",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.15.4",
+      date: "2026-05-17",
+      codename: "BASEPATH",
+      changes: {
+        tr: [
+          "Statik <base href=\"./\"> kaldırıldı; trailing slash yokken parent dizine çözülüyordu",
+          "Senkron <script> ile path sonunda slash yoksa ve uzantı yoksa <base href=\"<path>/\"> dinamik enjekte ediliyor",
+          "https://hbnf.net/time-echo (slash'sız) erişiminde asset'ler artık /time-echo/ altından isteniyor",
+        ],
+        en: [
+          "Removed the static <base href=\"./\">; without a trailing slash it resolved to the parent directory",
+          "A synchronous head script injects <base href=\"<path>/\"> when the URL has no trailing slash and no file extension",
+          "Accessing https://hbnf.net/time-echo (no slash) now resolves assets under /time-echo/ instead of the host root",
+        ],
+      },
+    },
     {
       v: "1.15.3",
       date: "2026-05-17",

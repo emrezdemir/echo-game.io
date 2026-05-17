@@ -4,6 +4,12 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.4] - 2026-05-17
+
+### Fixed
+- Removed the static `<base href="./">` introduced in 1.15.3. When the page was loaded without a trailing slash (for example `https://hbnf.net/time-echo`), the browser treated the last segment as a file and `./` resolved to the parent directory, causing every asset request to fall back to the host root.
+- A synchronous head script now injects `<base href="<path>/">` only when the URL has no trailing slash and no file extension. With this in place, accessing `/time-echo` or `/time-echo/` both resolve relative assets under `/time-echo/`.
+
 ## [1.15.3] - 2026-05-17
 
 ### Added

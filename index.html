@@ -4,9 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#07080d" />
-  <!-- Anchor relative paths to the document directory so the build runs from
-       any sub-path (for example /time-echo/) without server-side rewrites. -->
-  <base href="./" />
+  <!-- If the page is loaded without a trailing slash (for example
+       /time-echo instead of /time-echo/), the browser treats the last
+       segment as a file and resolves relative URLs against the parent
+       directory. This synchronous script injects a <base> so every
+       relative path resolves under the intended sub-path regardless.
+       It must run before any URL-resolving tag in the head. -->
+  <script>
+    (function () {
+      var p = location.pathname;
+      var isFile = /\.[a-z0-9]+$/i.test(p);
+      var endsWithSlash = p.charAt(p.length - 1) === "/";
+      if (!endsWithSlash && !isFile) {
+        document.write('<base href="' + p + '/">');
+      }
+    })();
+  </script>
   <title>Time Echo</title>
   <link rel="stylesheet" href="style.css" />
 </head>
