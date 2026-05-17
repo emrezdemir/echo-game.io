@@ -3,12 +3,27 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.15.4",
-  codename: "BASEPATH",
+  number: "1.15.5",
+  codename: "TRAILING_SLASH",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.15.5",
+      date: "2026-05-17",
+      codename: "TRAILING_SLASH",
+      changes: {
+        tr: [
+          "Sub-path düzeltmesi document.write yerine location.replace ile yeniden yazıldı; trailing slash yoksa sayfa /path/ formatına yönlendiriliyor",
+          "Yönlendirme sonrası tarayıcı doğru base ile yeni request atıyor; CSP veya parser zamanlaması <base> enjeksiyonunu engellese de çalışıyor",
+        ],
+        en: [
+          "Reworked the sub-path fix from document.write to location.replace; without a trailing slash the page now redirects to the /path/ form",
+          "After the redirect the browser issues new requests with the correct base, regardless of CSP or parser timing on document.write",
+        ],
+      },
+    },
     {
       v: "1.15.4",
       date: "2026-05-17",

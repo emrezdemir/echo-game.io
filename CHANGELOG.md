@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.5] - 2026-05-17
+
+### Fixed
+- Reworked the sub-path fix from `document.write` to `location.replace`. When the URL lacks a trailing slash and has no file extension (for example `https://hbnf.net/time-echo`), the head script now triggers a redirect to the `/path/` form. After the redirect the browser sets the correct base and reissues every relative request under the intended sub-path. This is reliable regardless of CSP policies or parser timing that can affect `document.write`.
+
 ## [1.15.4] - 2026-05-17
 
 ### Fixed

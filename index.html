@@ -6,17 +6,18 @@
   <meta name="theme-color" content="#07080d" />
   <!-- If the page is loaded without a trailing slash (for example
        /time-echo instead of /time-echo/), the browser treats the last
-       segment as a file and resolves relative URLs against the parent
-       directory. This synchronous script injects a <base> so every
-       relative path resolves under the intended sub-path regardless.
-       It must run before any URL-resolving tag in the head. -->
+       segment as a file and resolves every relative URL against the
+       parent directory. The reliable cross-host fix is to redirect to
+       the directory form so the browser sets the correct base before
+       any other resource is requested. The script runs synchronously
+       and must precede every URL-resolving tag in the head. -->
   <script>
     (function () {
       var p = location.pathname;
       var isFile = /\.[a-z0-9]+$/i.test(p);
       var endsWithSlash = p.charAt(p.length - 1) === "/";
-      if (!endsWithSlash && !isFile) {
-        document.write('<base href="' + p + '/">');
+      if (p.length > 1 && !endsWithSlash && !isFile) {
+        location.replace(p + "/" + location.search + location.hash);
       }
     })();
   </script>
