@@ -3,12 +3,29 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.15.5",
-  codename: "TRAILING_SLASH",
+  number: "1.15.6",
+  codename: "FAVICON",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.15.6",
+      date: "2026-05-17",
+      codename: "FAVICON",
+      changes: {
+        tr: [
+          "Inline SVG favicon eklendi (data URI); tarayıcının varsayılan /favicon.ico isteği bastırılıyor",
+          "Diamond simgesi: oyun paletinde mor gövde + cyan kontur ve merkez nokta",
+          "Harici favicon dosyası gerektirmiyor; ek HTTP isteği yok",
+        ],
+        en: [
+          "Added an inline SVG favicon via data URI; the browser's default /favicon.ico request is suppressed",
+          "Diamond glyph: purple body with cyan outline and centre dot, matching the game palette",
+          "No external favicon file required; no extra HTTP request",
+        ],
+      },
+    },
     {
       v: "1.15.5",
       date: "2026-05-17",
