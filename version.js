@@ -3,12 +3,35 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.12.2",
-  codename: "CRITICAL_PATH",
+  number: "1.13.0",
+  codename: "FIGURE",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.13.0",
+      date: "2026-05-17",
+      codename: "FIGURE",
+      changes: {
+        tr: [
+          "Karakter sprite'ı PNG tabanlı animasyon sistemine geçti (char/City_men_3 spritesheet'leri)",
+          "Yeni sprite.js modülü; 128×128 spritesheet'leri Idle, Run, Hurt, Dead için yatay strip olarak çözüyor",
+          "Idle (durağan), Run (hareket halinde, tüm yönler için), Hurt (kısa) ve Dead (ölünce) animasyonları aktif",
+          "Echo karakteri aynı sprite'ı hue-rotate filtresiyle mor tonlu render ediyor",
+          "drawAstronaut API'si korundu; çağrı yerleri moving flag'ı ile genişletildi",
+          "deploy.ps1 sprite.js ve char/ klasörünü pakete dahil ediyor",
+        ],
+        en: [
+          "Character sprite migrated to PNG-based animation (char/City_men_3 spritesheets)",
+          "New sprite.js module resolves 128x128 horizontal strips for Idle, Run, Hurt, Dead",
+          "Idle (stationary), Run (movement, all directions), Hurt (brief) and Dead animations are active",
+          "Echo character uses the same sprite tinted with a hue-rotate filter",
+          "drawAstronaut API preserved; call sites extended with a moving flag",
+          "deploy.ps1 packages sprite.js and the char/ folder",
+        ],
+      },
+    },
     {
       v: "1.12.2",
       date: "2026-05-17",

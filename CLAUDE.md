@@ -31,10 +31,11 @@ index.html
 ├── levels.js    — LEVELS (23 hand-crafted, direct array)
 ├── editor.js    — Editor (level editor, URL share, gallery)
 ├── webgl.js     — WebGLFX (post-processing shader pipeline)
+├── sprite.js    — Sprite (PNG character animation engine)
 └── game.js      — Screens, Save, Game (main engine)
 ```
 
-Load order matters. `game.js` depends on all preceding modules and must load last. `webgl.js` precedes `game.js`. `generator.js` is loaded but currently unused at runtime.
+Load order matters. `game.js` depends on all preceding modules and must load last. `sprite.js` and `webgl.js` precede `game.js`. `generator.js` is loaded but currently unused at runtime.
 
 ## Critical Concepts
 
@@ -92,7 +93,7 @@ Load order matters. `game.js` depends on all preceding modules and must load las
 - Every release adds a block to `CHANGELOG.md`.
 - Semantic versioning: `MAJOR.MINOR.PATCH`.
 - `VERSION.history[].changes` is bilingual: `{ tr: [...], en: [...] }`.
-- Current main: `1.12.2`.
+- Current main: `1.13.0`.
 
 ## Smoke Test
 

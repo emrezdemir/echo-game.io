@@ -28,6 +28,17 @@ NCS (NoCopyrightSounds) müziği YouTube, Twitch ve benzeri platformlarda
 
 ---
 
+## Character sprites
+
+- Files: `char/City_men_3/*.png` (Idle, Walk, Run, Attack, Hurt, Dead)
+- Used as: player and echo character animation
+- Source: Craftpix.net
+- License: https://craftpix.net/file-licenses/
+
+See `char/Licens.txt` for the upstream license reference.
+
+---
+
 ## Diğer / Other
 
 Bu repository'deki diğer tüm kod ve içerikler **orijinal eserdir** ve

@@ -1550,15 +1550,15 @@ const Game = (() => {
       const facing = fx.echoFacing[i] || 1;
       const lastMove = fx.echoLastMoveAt[i] || 0;
       const sinceMove = now - lastMove;
-      const walkPhase = sinceMove < 280
-        ? (sinceMove / 140)
-        : (now / 1500) * 0.3;
+      const moving = sinceMove < 280;
+      const walkPhase = moving ? (sinceMove / 280) : 0;
       drawAstronaut(cx, cy, cell * 0.85, {
         theme: "echo",
         alpha: es.dead ? 0.5 : 0.85,
         walkPhase,
         facing,
         dead: es.dead,
+        moving,
       });
     });
 
@@ -1569,15 +1569,15 @@ const Game = (() => {
       const cx = pp.x + cell / 2;
       const cy = pp.y + cell / 2;
       const sinceMove = now - fx.playerLastMoveAt;
-      const walkPhase = sinceMove < 280
-        ? (sinceMove / 140)
-        : (now / 1500) * 0.3;
+      const moving = sinceMove < 280;
+      const walkPhase = moving ? (sinceMove / 280) : 0;
       drawAstronaut(cx, cy, cell * 0.92, {
         theme: "player",
         alpha: 1,
         walkPhase,
         facing: fx.playerFacing,
         dead: !!player.dead,
+        moving,
       });
     }
 
@@ -1605,159 +1605,21 @@ const Game = (() => {
     drawAstronaut(cx, cy, size, { ...opts, theme });
   }
 
-  // ---------- Yandan görünen insan sprite (procedural) ----------
-  // Pixel-art tarzı mühendis: saç, cilt, tulum, bot. Yandan profil.
-  // Walking cycle: bacaklar zıt fazda salınır, kollar karşı salınır, hafif bob.
-  // size: tam boy piksel · facing: 1 sağ, -1 sol · walkPhase: 0..1+ (sin için)
-  // İşlev adı 'drawAstronaut' kalıyor — geriye uyumluluk için.
+  // Sprite engine'e delegasyon. API korunur (theme, alpha, walkPhase, facing,
+  // dead, moving, hurt, deadProgress, hurtProgress).
   function drawAstronaut(cx, cy, size, opts) {
-    const { theme = "player", alpha = 1, walkPhase = 0, facing = 1, dead = false } = opts;
-
-    const PAL = theme === "echo" ? {
-      hair:    "#2a1850",
-      hairLt:  "#4a3a78",
-      skin:    "#d4a8c0",
-      skinDk:  "#9a7a98",
-      suit:    "#8a7dff",
-      suitDk:  "#4a3da0",
-      pants:   "#2a1858",
-      pantsDk: "#10052a",
-      boots:   "#0c0420",
-      accent:  "#ff8acc",
-      eye:     "#0a0418",
-      rim:     "rgba(138,125,255,0.55)",
-    } : {
-      hair:    "#2a1808",
-      hairLt:  "#4a2e18",
-      skin:    "#e8c8a0",
-      skinDk:  "#a88868",
-      suit:    "#5ad7ff",
-      suitDk:  "#1d6a90",
-      pants:   "#1a3a5a",
-      pantsDk: "#08182a",
-      boots:   "#040c18",
-      accent:  "#7dffb6",
-      eye:     "#08081a",
-      rim:     "rgba(90,215,255,0.55)",
-    };
-
-    ctx.save();
-    ctx.globalAlpha = alpha * (dead ? 0.5 : 1);
-
-    // Yön: default sağa bakar. facing < 0 ise yatay flip.
-    if (facing < 0) {
-      ctx.translate(cx, cy); ctx.scale(-1, 1); ctx.translate(-cx, -cy);
-    }
-
-    const h = size;
-    // Pixel-grid birimi (18 satırlık design space, integer aligned çizim)
-    const u = h / 18;
-    const swing = dead ? 0 : Math.sin(walkPhase * Math.PI * 2);
-    const bob = dead ? 0 : Math.abs(Math.sin(walkPhase * Math.PI * 4)) * u * 0.45;
-
-    // Pixel-art helper: design space koordinatları → tam sayı pikseller
-    // (sx, sy = sprite merkez-relative pixel units; sw, sh = boyut)
-    function px(sx, sy, sw, sh, color) {
-      ctx.fillStyle = color;
-      ctx.fillRect(
-        Math.round(cx + sx * u),
-        Math.round(cy + (sy - bob / u) * u),
-        Math.max(1, Math.round(sw * u)),
-        Math.max(1, Math.round(sh * u))
-      );
-    }
-
-    // SHADOW (sabit, bob'tan etkilenmez)
-    ctx.fillStyle = "rgba(0,0,0,0.4)";
-    ctx.beginPath();
-    ctx.ellipse(cx, cy + h * 0.41, u * 3.2, u * 0.7, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // ===== WALK ANIMATION OFFSETS =====
-    const legA = swing * 1.4;       // arka bacak (geri salınır)
-    const legB = -swing * 1.4;      // ön bacak (ileri salınır)
-    const armA = -swing * 1.0;      // arka kol
-    const armB = swing * 1.0;       // ön kol
-
-    // ===== BACK LEG (arka, biraz daha koyu) =====
-    px(-1.4, 4 + Math.abs(legA) * 0.1, 1.2, 4 - Math.abs(legA) * 0.1, PAL.pantsDk);
-    // Arka bot
-    px(-1.7 + legA * 0.3, 7.5, 1.8, 1.2, PAL.boots);
-
-    // ===== BACK ARM (arka, gövde arkasında, sönük) =====
-    ctx.globalAlpha = (alpha * (dead ? 0.5 : 1)) * 0.6;
-    px(-1.8 + armA * 0.4, -1, 1, 3.5, PAL.suitDk);
-    px(-1.9 + armA * 0.4, 2.3, 1.2, 0.9, PAL.skinDk);  // arka el
-    ctx.globalAlpha = alpha * (dead ? 0.5 : 1);
-
-    // ===== TORSO ===== (tulum)
-    // Ana gövde
-    px(-1.7, -2.5, 3.2, 6.5, PAL.suit);
-    // Sırt tarafı gölge
-    px(-1.7, -2.5, 0.9, 6.5, PAL.suitDk);
-    // Kemer
-    px(-1.7, 3.0, 3.2, 0.6, PAL.boots);
-    // Göğüs aksesuarı (LED / arma)
-    if (!dead) {
-      ctx.shadowColor = PAL.accent;
-      ctx.shadowBlur = 4;
-    }
-    px(0.4, -0.5, 0.7, 0.7, PAL.accent);
-    ctx.shadowBlur = 0;
-    // Yatay çizgiler (tulum dokusu)
-    px(-1.7, -1.0, 3.2, 0.2, PAL.suitDk);
-    px(-1.7, 1.5, 3.2, 0.2, PAL.suitDk);
-
-    // ===== NECK =====
-    px(-0.3, -3.5, 1.1, 1.2, PAL.skinDk);
-    px(0.0, -3.5, 0.8, 1.0, PAL.skin);
-
-    // ===== HEAD =====
-    // Kafa arka (saç dahil)
-    px(-2.0, -8.0, 3.5, 3.5, PAL.hair);
-    // Yüz / cilt — burun çıkıntılı
-    px(-0.6, -7.7, 2.4, 3.0, PAL.skin);
-    // Burun bump (ön)
-    px(1.9, -6.5, 0.8, 1.0, PAL.skin);
-    // Çene
-    px(-0.4, -5.0, 2.0, 0.8, PAL.skinDk);
-    // Saç fringe (üst)
-    px(-1.8, -8.5, 3.4, 1.0, PAL.hair);
-    // Saç highlight
-    px(-1.0, -8.4, 1.6, 0.3, PAL.hairLt);
-    // Kulak hint (arka)
-    px(-1.4, -6.5, 0.6, 0.8, PAL.skinDk);
-    // Göz
-    if (!dead) {
-      px(1.0, -7.0, 0.5, 0.6, PAL.eye);
-      // Pupil highlight
-      px(1.2, -7.0, 0.2, 0.2, "rgba(255,255,255,0.6)");
-    } else {
-      // X göz (ölü)
-      px(0.8, -6.8, 1.0, 0.3, "#5a1a1a");
-    }
-    // Ağız çizgisi
-    px(1.0, -5.7, 1.0, 0.25, PAL.skinDk);
-
-    // ===== FRONT LEG (ön — gövde önünde) =====
-    px(-0.1 + legB * 0.3, 4 + Math.abs(legB) * 0.1, 1.2, 4 - Math.abs(legB) * 0.1, PAL.pants);
-    // Ön bot
-    px(-0.4 + legB * 0.5, 7.5, 1.8, 1.2, PAL.boots);
-
-    // ===== FRONT ARM (ön — gövdenin önünde) =====
-    px(0.6 + armB * 0.3, -1, 1, 3.5, PAL.suit);
-    px(0.5 + armB * 0.5, 2.3, 1.2, 0.9, PAL.skin);  // ön el
-
-    // ===== RIM GLOW (canlıysa) =====
-    if (!dead) {
-      ctx.strokeStyle = PAL.rim;
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy - u * 0.5, u * 3.0, u * 9, 0, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-
-    ctx.restore();
+    if (typeof Sprite === "undefined") return;
+    Sprite.init();
+    Sprite.draw(ctx, cx, cy, size, opts.theme || "player", {
+      alpha: opts.alpha != null ? opts.alpha : 1,
+      facing: opts.facing != null ? opts.facing : 1,
+      walkPhase: opts.walkPhase || 0,
+      moving: !!opts.moving,
+      dead: !!opts.dead,
+      hurt: !!opts.hurt,
+      deadProgress: opts.deadProgress != null ? opts.deadProgress : 1,
+      hurtProgress: opts.hurtProgress != null ? opts.hurtProgress : 0,
+    });
   }
 
   // ---------- Starfield (parallax background) ----------

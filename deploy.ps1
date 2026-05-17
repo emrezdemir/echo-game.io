@@ -31,13 +31,15 @@ $files = @(
     "i18n.js",
     "levels.js",
     "music.js",
+    "sprite.js",
     "story.js",
     "version.js",
     "webgl.js"
 )
 # Klasörler (recurse kopyala)
 $folders = @(
-    "music"
+    "music",
+    "char"
 )
 
 # ----- Remove previous zip -----
