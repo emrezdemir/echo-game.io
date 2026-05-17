@@ -1586,7 +1586,7 @@ const Game = (() => {
       const sinceMove = now - lastMove;
       const moving = sinceMove < 280;
       const walkPhase = moving ? (sinceMove / 280) : 0;
-      drawAstronaut(cx, cy, cell * 1.2, {
+      drawAstronaut(cx, cy, cell * 0.95, {
         theme: "echo",
         alpha: es.dead ? 0.5 : 0.85,
         walkPhase,
@@ -1609,7 +1609,7 @@ const Game = (() => {
       if (!player.dead && !moving && sinceMove > 5000 && typeof Bark !== "undefined") {
         Bark.maybe("idle", 0.002);
       }
-      drawAstronaut(cx, cy, cell * 1.3, {
+      drawAstronaut(cx, cy, cell * 1.0, {
         theme: "player",
         alpha: 1,
         walkPhase,

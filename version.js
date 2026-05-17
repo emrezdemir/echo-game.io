@@ -3,12 +3,29 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.15.0",
-  codename: "INNER_VOICE",
+  number: "1.15.1",
+  codename: "CONTAIN",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.15.1",
+      date: "2026-05-17",
+      codename: "CONTAIN",
+      changes: {
+        tr: [
+          "Karakter çizim boyutu cell sınırı içine alındı; sprite frame artık bir hücreden büyük değil",
+          "Oyuncu cell × 1.30 → cell × 1.0",
+          "Yankı cell × 1.20 → cell × 0.95",
+        ],
+        en: [
+          "Character draw size constrained to the cell; the sprite frame no longer exceeds one tile",
+          "Player cell x 1.30 -> cell x 1.0",
+          "Echo cell x 1.20 -> cell x 0.95",
+        ],
+      },
+    },
     {
       v: "1.15.0",
       date: "2026-05-17",
