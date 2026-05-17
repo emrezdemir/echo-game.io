@@ -1580,7 +1580,7 @@ const Game = (() => {
       const sinceMove = now - lastMove;
       const moving = sinceMove < 280;
       const walkPhase = moving ? (sinceMove / 280) : 0;
-      drawAstronaut(cx, cy, cell * 0.85, {
+      drawAstronaut(cx, cy, cell * 1.7, {
         theme: "echo",
         alpha: es.dead ? 0.5 : 0.85,
         walkPhase,
@@ -1599,7 +1599,7 @@ const Game = (() => {
       const sinceMove = now - fx.playerLastMoveAt;
       const moving = sinceMove < 280;
       const walkPhase = moving ? (sinceMove / 280) : 0;
-      drawAstronaut(cx, cy, cell * 0.92, {
+      drawAstronaut(cx, cy, cell * 1.85, {
         theme: "player",
         alpha: 1,
         walkPhase,

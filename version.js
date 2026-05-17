@@ -3,12 +3,29 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.14.0",
-  codename: "ATMOSPHERE",
+  number: "1.14.1",
+  codename: "SCALE",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.14.1",
+      date: "2026-05-17",
+      codename: "SCALE",
+      changes: {
+        tr: [
+          "Karakter sprite boyutu artırıldı; PNG karelerin etrafındaki şeffaf çerçeveden dolayı oluşan orantısızlık düzeltildi",
+          "Oyuncu çizim boyutu cell × 0.92 → cell × 1.85",
+          "Yankı çizim boyutu cell × 0.85 → cell × 1.70",
+        ],
+        en: [
+          "Increased character sprite draw size to correct the scale mismatch caused by the transparent padding in the PNG frames",
+          "Player draw size cell x 0.92 -> cell x 1.85",
+          "Echo draw size cell x 0.85 -> cell x 1.70",
+        ],
+      },
+    },
     {
       v: "1.14.0",
       date: "2026-05-17",

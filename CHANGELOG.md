@@ -4,6 +4,11 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.1] - 2026-05-17
+
+### Changed
+- Character sprite draw size raised to compensate for the transparent padding around each 128x128 PNG frame. Player size changed from `cell * 0.92` to `cell * 1.85`; echo size from `cell * 0.85` to `cell * 1.70`.
+
 ## [1.14.0] - 2026-05-17
 
 ### Added
