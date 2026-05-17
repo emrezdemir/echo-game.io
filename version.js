@@ -3,12 +3,29 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.14.1",
-  codename: "SCALE",
+  number: "1.14.2",
+  codename: "STAND",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.14.2",
+      date: "2026-05-17",
+      codename: "STAND",
+      changes: {
+        tr: [
+          "Karakter artık cell tabanından anchor'lanıyor (ayaklar hücre zemininde); duvar üstüne kayma sorunu giderildi",
+          "Sprite.draw cell parametresi alıyor; ayak oranı FOOT_RATIO=0.85 ile hizalama yapılıyor",
+          "Çizim boyutları makul seviyeye çekildi: oyuncu cell × 1.30, yankı cell × 1.20",
+        ],
+        en: [
+          "Character now anchors at the bottom of the grid cell (feet on the tile floor); overflow into the wall below is resolved",
+          "Sprite.draw accepts a cell parameter; foot alignment uses FOOT_RATIO=0.85",
+          "Draw sizes tuned: player cell x 1.30, echo cell x 1.20",
+        ],
+      },
+    },
     {
       v: "1.14.1",
       date: "2026-05-17",

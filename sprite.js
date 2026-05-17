@@ -65,6 +65,12 @@ const Sprite = (() => {
     ctx.restore();
   }
 
+  // The character pixels in each frame are concentrated in the upper-middle
+  // portion of the 128x128 box. Feet land at roughly 85% of the frame height.
+  // Anchoring at this ratio lines the character up with the bottom of the
+  // grid cell when the caller passes its cell size.
+  const FOOT_RATIO = 0.85;
+
   function draw(ctx, cx, cy, size, theme, state) {
     const alpha = state.alpha != null ? state.alpha : 1;
     const anim = pickAnim(state);
@@ -80,7 +86,10 @@ const Sprite = (() => {
     const dw = size;
     const dh = size;
     const dx = cx - dw / 2;
-    const dy = cy - dh / 2;
+    // Anchor by feet: if caller passes cell size, align character feet with
+    // the bottom of the cell so the figure visually stands inside the tile.
+    const cellSize = state.cell != null ? state.cell : size;
+    const dy = (cy + cellSize / 2) - dh * FOOT_RATIO;
 
     ctx.save();
     ctx.imageSmoothingEnabled = false;

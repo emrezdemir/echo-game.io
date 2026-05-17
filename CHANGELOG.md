@@ -4,6 +4,15 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.2] - 2026-05-17
+
+### Fixed
+- Character feet now anchor at the bottom of the grid cell. Previously the sprite was centered on the cell, so larger draw sizes spilled the figure onto the wall below.
+
+### Changed
+- `Sprite.draw` accepts a `cell` parameter and aligns the sprite with `FOOT_RATIO = 0.85` against the cell bottom.
+- Draw sizes tuned: player `cell * 1.30`, echo `cell * 1.20`.
+
 ## [1.14.1] - 2026-05-17
 
 ### Changed

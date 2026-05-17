@@ -1580,13 +1580,14 @@ const Game = (() => {
       const sinceMove = now - lastMove;
       const moving = sinceMove < 280;
       const walkPhase = moving ? (sinceMove / 280) : 0;
-      drawAstronaut(cx, cy, cell * 1.7, {
+      drawAstronaut(cx, cy, cell * 1.2, {
         theme: "echo",
         alpha: es.dead ? 0.5 : 0.85,
         walkPhase,
         facing,
         dead: es.dead,
         moving,
+        cell,
       });
     });
 
@@ -1599,13 +1600,14 @@ const Game = (() => {
       const sinceMove = now - fx.playerLastMoveAt;
       const moving = sinceMove < 280;
       const walkPhase = moving ? (sinceMove / 280) : 0;
-      drawAstronaut(cx, cy, cell * 1.85, {
+      drawAstronaut(cx, cy, cell * 1.3, {
         theme: "player",
         alpha: 1,
         walkPhase,
         facing: fx.playerFacing,
         dead: !!player.dead,
         moving,
+        cell,
       });
     }
 
@@ -1637,7 +1639,7 @@ const Game = (() => {
   }
 
   // Sprite engine'e delegasyon. API korunur (theme, alpha, walkPhase, facing,
-  // dead, moving, hurt, deadProgress, hurtProgress).
+  // dead, moving, hurt, deadProgress, hurtProgress, cell).
   function drawAstronaut(cx, cy, size, opts) {
     if (typeof Sprite === "undefined") return;
     Sprite.init();
@@ -1650,6 +1652,7 @@ const Game = (() => {
       hurt: !!opts.hurt,
       deadProgress: opts.deadProgress != null ? opts.deadProgress : 1,
       hurtProgress: opts.hurtProgress != null ? opts.hurtProgress : 0,
+      cell: opts.cell != null ? opts.cell : size,
     });
   }
 
