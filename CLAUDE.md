@@ -162,10 +162,23 @@ Version bump policy:
 
 ## Roadmap
 
-- Online leaderboard with a minimal API.
-- Per-level difficulty rating computed from an AI solver's optimal solution.
-- Additional hand-crafted levels exploring quantum-plus-crate compositions.
+### Polish
+
+- Asset preloading screen so the character fallback disc is not visible during the first frames while PNG sheets are still decoding.
+- Echo characters emit their own short bark lines, distinct from the player pool, with stricter cooldown so the screen does not crowd.
+- Win overlay celebration: layered star burst, animated time-bonus, and a path-tracing replay preview alongside the existing fanfare.
+- Settings panel: volume slider, language toggle, accessibility options (reduce-motion, high-contrast palette) in a dedicated screen rather than scattered HUD buttons.
+- Sentry direction indicator on the tile when paused or in the editor preview.
+- Laser beam rendering upgrade: pulse, glow, and end-cap effects driven by `Music.getEnergy()` like the title screen.
+- Editor palette additions: quantum tile, fragile plate, sentry with direction handle, multi-plate-binding laser declaration UI.
+
+### New features
+
+- Online leaderboard with a minimal API (level index, stars, time, echo count, anonymous handle).
+- Per-level difficulty rating computed from an AI solver's optimal-echo, optimal-move solution.
+- Additional hand-crafted levels exploring quantum-plus-crate and sentry-plus-portal compositions.
 - Sound effects for crate push, quantum flip, and star award.
+- Daily challenge: a single deterministically seeded grid available per day with a shared leaderboard.
 
 ## Communication Style
 
