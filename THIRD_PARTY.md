@@ -37,6 +37,27 @@ NCS (NoCopyrightSounds) müziği YouTube, Twitch ve benzeri platformlarda
 
 See `char/Licens.txt` for the upstream license reference.
 
+## Effect sprites
+
+- Files: `effects/**/*.png`
+- Used as: portal teleport, sparks, smoke, and other in-world effects
+- Source: Craftpix.net
+- License: https://craftpix.net/file-licenses/
+
+See `effects/License.txt` for the upstream license reference.
+
+## In-game music
+
+- File: `music/level_music.mp3`
+- Used as: looping in-game soundtrack
+- Source: third-party
+
+## Sound effects
+
+- File: `music/teleport.mp3`
+- Used as: portal teleport sound effect
+- Source: third-party
+
 ---
 
 ## Diğer / Other

@@ -10,7 +10,12 @@ const Music = (() => {
   // ---------- Menu music: external MP3 (NCS - C - Voyage) ----------
   // Analyser exposed for spectrum-reactive visuals (TitleFX).
   const MENU_TRACK_URL = "music/voyage_main_menu.mp3";
+  const GAME_TRACK_URL = "music/level_music.mp3";
+  const TELEPORT_SFX_URL = "music/teleport.mp3";
+
   let menuAudio = null;
+  let gameAudio = null;
+  let teleportSfx = null;
   let menuCtx = null;
   let menuSource = null;
   let menuAnalyser = null;
@@ -93,6 +98,54 @@ const Music = (() => {
   function stopMenuTrack() {
     if (!menuAudio) return;
     try { menuAudio.pause(); } catch (e) {}
+  }
+
+  function startGameTrack() {
+    if (gameAudio) {
+      const p = gameAudio.play();
+      if (p && p.catch) p.catch(err => console.info("[Music] Game audio resume blocked:", err && err.message));
+      return;
+    }
+    try {
+      gameAudio = new HTMLAudioCtor(GAME_TRACK_URL);
+    } catch (e) {
+      console.warn("[Music] HTMLAudio constructor failed for game track:", e);
+      return;
+    }
+    gameAudio.loop = true;
+    gameAudio.preload = "auto";
+    gameAudio.volume = muted ? 0 : volume * 0.6;
+    gameAudio.addEventListener("error", () => {
+      console.warn("[Music] level_music load error:",
+        gameAudio.error ? gameAudio.error.code : "unknown");
+    });
+    const p = gameAudio.play();
+    if (p && p.catch) {
+      p.catch(err =>
+        console.info("[Music] Game track autoplay blocked; will start on next gesture. (" + (err && err.message || err) + ")")
+      );
+    }
+  }
+
+  function stopGameTrack() {
+    if (!gameAudio) return;
+    try { gameAudio.pause(); } catch (e) {}
+  }
+
+  function playTeleportSfx() {
+    if (muted) return;
+    if (!teleportSfx) {
+      try {
+        teleportSfx = new HTMLAudioCtor(TELEPORT_SFX_URL);
+        teleportSfx.preload = "auto";
+      } catch (e) {
+        return;
+      }
+    }
+    try { teleportSfx.currentTime = 0; } catch (e) {}
+    teleportSfx.volume = muted ? 0 : volume;
+    const p = teleportSfx.play();
+    if (p && p.catch) p.catch(() => {});
   }
 
   // Procedural fallback spectrum — gerçek audio analizi yoksa kullanılır
@@ -490,10 +543,8 @@ const Music = (() => {
   // ---------- Public ----------
   function play(track) {
     if (track === currentTrack) {
-      // Aynı track — kickstart yolu (user gesture sonrası)
       if (track === "menu") {
         if (!menuAudio) {
-          // İlk denemede oluşturulamadıysa şimdi tekrar dene (autoplay policy)
           startMenuTrack();
         } else {
           if (menuCtx && menuCtx.state === "suspended") {
@@ -506,37 +557,50 @@ const Music = (() => {
           }
         }
       }
-      if (track === "game" && chip && chip.ctx.state === "suspended") {
-        chip.ctx.resume().catch(() => {});
+      if (track === "game") {
+        if (!gameAudio) {
+          startGameTrack();
+        } else if (gameAudio.paused) {
+          const p = gameAudio.play();
+          if (p && p.catch) p.catch(err =>
+            console.info("[Music] game resume blocked:", err && err.message));
+        }
       }
       return;
     }
     currentTrack = track;
     if (track === "menu") {
+      stopGameTrack();
       stopChip();
       startMenuTrack();
     } else if (track === "game") {
       stopMenuTrack();
-      startChip(track);
+      stopChip();
+      startGameTrack();
     }
   }
   function stopAll() {
     currentTrack = null;
     stopChip();
     stopMenuTrack();
+    stopGameTrack();
   }
   function setMuted(v) {
     muted = !!v;
     if (chip) chip.master.gain.value = muted ? 0 : volume * 0.55;
     if (menuAudio) menuAudio.volume = muted ? 0 : volume;
+    if (gameAudio) gameAudio.volume = muted ? 0 : volume * 0.6;
+    if (teleportSfx) teleportSfx.volume = muted ? 0 : volume;
   }
   function setVolume(v) {
     volume = Math.max(0, Math.min(1, v));
     if (chip) chip.master.gain.value = muted ? 0 : volume * 0.55;
     if (menuAudio) menuAudio.volume = muted ? 0 : volume;
+    if (gameAudio) gameAudio.volume = muted ? 0 : volume * 0.6;
+    if (teleportSfx) teleportSfx.volume = muted ? 0 : volume;
   }
   function getVolume() { return volume; }
   function isMuted() { return muted; }
 
-  return { play, stopAll, setMuted, setVolume, getVolume, isMuted, playSting, getSpectrum, getEnergy };
+  return { play, stopAll, setMuted, setVolume, getVolume, isMuted, playSting, playTeleportSfx, getSpectrum, getEnergy };
 })();

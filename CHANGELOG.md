@@ -4,6 +4,20 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0] - 2026-05-17
+
+### Added
+- `effects.js` module: PNG effect animation engine. Loads horizontal-strip spritesheets and plays one-shot animations at world cells (portal, sparks, smoke).
+- Portal teleport spawns the PNG portal animation at both endpoints.
+- Laser and sentry deaths spawn the sparks animation at the victim cell.
+- `level_music.mp3` plays as the looping in-game soundtrack across every level.
+- `teleport.mp3` plays on every portal teleport.
+
+### Changed
+- Procedural chiptune is no longer the in-game track; `Music.play("game")` now plays the MP3 file.
+- `Audio.teleport()` synth call replaced by `Music.playTeleportSfx()` (HTMLAudio MP3).
+- `deploy.ps1` packages `effects.js` and the `effects/` asset folder.
+
 ## [1.13.0] - 2026-05-17
 
 ### Added

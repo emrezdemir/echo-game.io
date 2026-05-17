@@ -338,6 +338,11 @@ const Game = (() => {
   if (!useWebGL) {
     ctx = canvas.getContext("2d");
   }
+
+  // Preload PNG asset engines
+  if (typeof Sprite !== "undefined") Sprite.init();
+  if (typeof Effects !== "undefined") Effects.init();
+
   const movesEl = document.getElementById("movesLeft");
   const echoEl = document.getElementById("echoCount");
   const levelNumEl = document.getElementById("levelNum");
@@ -534,6 +539,7 @@ const Game = (() => {
     fx.boxTween = [];
     fx.echoLastMoveAt = [];
     fx.echoFacing = [];
+    if (typeof Effects !== "undefined") Effects.clear();
     hideOverlay();
     computeBeams();
     updateHUD();
@@ -767,10 +773,15 @@ const Game = (() => {
       const sx = player.x, sy = player.y;
       player.x = pTarget.x;
       player.y = pTarget.y;
-      Audio.teleport();
+      if (typeof Music !== "undefined" && Music.playTeleportSfx) Music.playTeleportSfx();
+      else Audio.teleport();
       shake(3, 160);
       fx._teleportBursts.push({ x: sx, y: sy, t: performance.now(), kind: "out" });
       fx._teleportBursts.push({ x: pTarget.x, y: pTarget.y, t: performance.now(), kind: "in" });
+      if (typeof Effects !== "undefined") {
+        Effects.spawn("portal", sx, sy);
+        Effects.spawn("portal", pTarget.x, pTarget.y);
+      }
       // Tween'i yeni konuma snap et — render eski tween'i takip etmesin
       fx.playerTween = null;
     }
@@ -782,6 +793,10 @@ const Game = (() => {
         es.pos = { x: t.x, y: t.y };
         fx._teleportBursts.push({ x: sx, y: sy, t: performance.now(), kind: "out" });
         fx._teleportBursts.push({ x: t.x, y: t.y, t: performance.now(), kind: "in" });
+        if (typeof Effects !== "undefined") {
+          Effects.spawn("portal", sx, sy);
+          Effects.spawn("portal", t.x, t.y);
+        }
         fx.echoTween[i] = null;
       }
     });
@@ -815,8 +830,12 @@ const Game = (() => {
           es._burstFired = true;
           fx._echoDeathBursts = fx._echoDeathBursts || [];
           fx._echoDeathBursts.push({ x: es.pos.x, y: es.pos.y, t: performance.now() });
+          if (typeof Effects !== "undefined") Effects.spawn("sparks", es.pos.x, es.pos.y);
         }
       });
+      if (player.dead && typeof Effects !== "undefined") {
+        Effects.spawn("sparks", player.x, player.y);
+      }
     }
 
     // 4.5. Devriye hasarı — aynı hücreyi paylaşan canlı varlık ölür
@@ -840,6 +859,15 @@ const Game = (() => {
     if (patrolHit) {
       Audio.death();
       shake(10, 320);
+      if (typeof Effects !== "undefined") {
+        if (player.dead) Effects.spawn("sparks", player.x, player.y);
+        echoState.forEach(es => {
+          if (es.dead && !es._patrolBurstFired) {
+            es._patrolBurstFired = true;
+            Effects.spawn("sparks", es.pos.x, es.pos.y);
+          }
+        });
+      }
     }
 
     // 4.6. Kırılgan plaka latching — fragile listedeki plaka üzerinde canlı varlık varsa kapı sonsuza açık
@@ -1581,8 +1609,11 @@ const Game = (() => {
       });
     }
 
-    // Particles (en üst katman)
+    // Particles (procedural)
     updateAndDrawParticles(dt, ox, oy, cell);
+
+    // PNG effects (top layer)
+    if (typeof Effects !== "undefined") Effects.draw(ctx, ox, oy, cell);
   }
 
   function drawDiamond(cx, cy, r) {

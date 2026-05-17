@@ -3,12 +3,35 @@
 // The `changes` field is bilingual: { tr: [...], en: [...] }.
 
 const VERSION = {
-  number: "1.13.0",
-  codename: "FIGURE",
+  number: "1.14.0",
+  codename: "ATMOSPHERE",
   date: "2026-05-17",
   build: "monolith",
 
   history: [
+    {
+      v: "1.14.0",
+      date: "2026-05-17",
+      codename: "ATMOSPHERE",
+      changes: {
+        tr: [
+          "Yeni effects.js modülü: PNG efekt animasyonu oynatma motoru",
+          "Portal teleport noktalarında PNG portal efekti (effects/5 Other/Portal1.png)",
+          "Lazer ve devriye ölümlerinde kıvılcım efekti (effects/3 Sparks/1.png)",
+          "Tüm seviyelerde level_music.mp3 sürekli loop ile çalıyor (procedural chiptune kaldırıldı)",
+          "Portal ışınlanma sesi teleport.mp3 ile değişti (eski synth tone kaldırıldı)",
+          "deploy.ps1 effects.js ve effects/ klasörünü pakete dahil ediyor",
+        ],
+        en: [
+          "New effects.js module: PNG effect animation playback engine",
+          "Portal teleport endpoints play the PNG portal animation (effects/5 Other/Portal1.png)",
+          "Laser and sentry deaths trigger the sparks animation (effects/3 Sparks/1.png)",
+          "All levels loop level_music.mp3 (procedural chiptune replaced)",
+          "Portal teleport sound switched to teleport.mp3 (synth tone replaced)",
+          "deploy.ps1 packages effects.js and the effects/ folder",
+        ],
+      },
+    },
     {
       v: "1.13.0",
       date: "2026-05-17",
